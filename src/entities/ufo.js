@@ -13,6 +13,7 @@ Ufo = BaseEntity.extend({
             .bind('EnterFrame', function(e){
 
             })
+            
             .bind('Click', function(){
                 
             })

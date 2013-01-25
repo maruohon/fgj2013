@@ -20,6 +20,22 @@ Sprites = Backbone.Model.extend({
                  'elements': {
                      'ufo' : [0, 0]
                  }
+            },
+            'worm' : {
+                 'file' : 'web/images/worm_anim.png',
+                 'tile' : 64,
+                 'tileh' : 64,
+                 'elements': {
+                     'worm' : [0, 0]
+                 }
+            },
+            'grass' : {
+                 'file' : 'web/images/grass_01.png',
+                 'tile' : 64,
+                 'tileh' : 64,
+                 'elements': {
+                     'grass01' : [0, 0]
+                 }
             }
         }
     },
@@ -44,6 +60,7 @@ Sprites = Backbone.Model.extend({
         };
 
         _.each(this.get('images'), function(element, k){ 
+        	console.log(element);
             if(element['tileh'] == undefined)
                 Crafty.sprite(element['tile'], element['file'], element['elements']);
             else
