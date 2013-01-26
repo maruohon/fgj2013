@@ -4,13 +4,18 @@ Crafty.scene("main", function() {
         "src/entities/ufo.js",
         "src/entities/worm.js",
         "src/entities/tile.js",
+				"src/entities/bird.js",
         "src/interfaces/info.js"
 	];
 	
 	//when everything is loaded, run the main scene
 	require(elements, function() {	   
-		sc['worm'] = new Worm();
-		sc['ufo'] = new Ufo();
+		/* Create a set of worms */
+		for(var i = 0; i < 10; i++) {
+			wormList[i+''] = new Worm();
+		}
+			
+		sc['bird'] = new Bird();
 //		sc['grass'] = new Tile('grass01');
 
 		for (var i = 0; i < 8; i++) {

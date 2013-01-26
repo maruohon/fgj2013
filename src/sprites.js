@@ -21,6 +21,14 @@ Sprites = Backbone.Model.extend({
                      'ufo' : [0, 0]
                  }
             },
+						'bird' : {
+                 'file' : 'web/images/worm.png',
+                 'tile' : 128,
+                 'tileh' : 128,
+                 'elements': {
+                     'bird' : [0, 0]
+                 }
+            },
             'worm' : {
                  'file' : 'web/images/worm_anim.png',
                  'tile' : 64,
