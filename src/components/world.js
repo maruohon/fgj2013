@@ -178,7 +178,12 @@ World = BaseEntity.extend({
 		}});
 
 		model.set({'loadChunk': function(chunk_x, chunk_z) {
+			console.log('loadChunk(' + chunk_x + ', ' + chunk_z + ')');
 			var tmp = localStorage.getItem('TerrainData_x' + chunk_x + '_z' + chunk_z);
+
+				model.attributes.generateChunk(chunk_x, chunk_z);
+				model.attributes.generateFeatures(chunk_x, chunk_z);
+				return true;
 
 			if(tmp === null) {
 //				console.log('loadChunk(): localStorage.getItem() returned null');
@@ -204,12 +209,46 @@ World = BaseEntity.extend({
 		}});
 
 		model.set({'unloadChunk': function(chunk_x, chunk_z) {
+			console.log('unloadChunk(' + chunk_x + ', ' + chunk_z + ')');
 			var str = "";
 //			console.log('unloadChunk()' + model.get('terrainData'));
 			str = JSON.stringify(model.get('terrainData')[chunk_x][chunk_z]);
 //			console.log('str: ' + str);
 			localStorage.setItem('TerrainData_x' + chunk_x + '_z' + chunk_z, str);
 			model.get('terrainData')[chunk_x][chunk_z].splice();
+
+			return true;
+		}});
+
+		// Keep the world loaded around the player and/or around the x and z coordinates given, with a radius of 'r'
+		// Note: the radius will be a square, not a circle!
+		model.set({'loadAroundXZwithR': function(x, z, r) {
+			console.log('loadAroundXZwithR(' + x + ', ' + z + ', ' + r + ')');
+			var cs = model.get('chunkSize'); // current chunk size
+
+			// First, unload all the chunks that are outside of the radius
+			for(var i in model.get('terrainData')) {
+				console.log('for i in ... :' + i);
+				for(var j in model.get('terrainData')[i]) {
+					// Chunk is outside of the current radius
+					if(Math.abs(x - (i * cs)) > r && Math.abs(z - (j * cs)) > r) {
+						console.log('loadAround: unloading');
+						model.attributes.unloadChunk(i, j);
+					}
+				}
+			}
+
+			// Finally, load all the chunks that are inside the radius and not in memory yet
+			var cx_min = Math.floor((x - r) / cs);
+			var cx_max = Math.floor((x + r) / cs);
+			var cz_min = Math.floor((z - r) / cs);
+			var cz_max = Math.floor((z + r) / cs);
+
+			for(var i = cx_min; i <= cx_max; i++) {
+				for(var j = cz_min; j <= cz_max; j++) {
+					model.attributes.loadChunk(i, j);
+				}
+			}
 
 			return true;
 		}});

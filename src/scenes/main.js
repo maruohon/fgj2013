@@ -37,19 +37,39 @@ Crafty.scene("main", function() {
 
 		sc['world'] = new World();
 
-		var isLoaded = sc['world'].attributes.chunkIsLoaded(0, 0);
-		console.log('chunkIsLoaded 0, 0: ' + isLoaded);
+		var tmp = "";
+/*
+		tmp = sc['world'].attributes.chunkIsLoaded(0, 0);
+		console.log('chunkIsLoaded 0, 0: ' + tmp);
 
-		if(isLoaded === false) {
-			console.log('loadChunk(0, 0) ... ' + sc['world'].attributes.loadChunk(0, 0) );
-//			console.log('generateChunk(0, 0) ...' + sc['world'].attributes.generateChunk(0, 0, 'grass'));
-//			console.log('generateFeatures(0, 0) ...' + sc['world'].attributes.generateFeatures(0, 0));
+		if(tmp === false) {
+			tmp = sc['world'].attributes.loadChunk(0, 0);
+//			console.log('loadChunk(0, 0) ... ' + tmp);
 		}
+*/
+//		tmp = sc['world'].attributes.unloadChunk(0, 0);
+//		console.log('unloadChunk(0, 0) ... ' + tmp);
+		tmp = sc['world'].attributes.loadAroundXZwithR(3, 3, 2);
+		console.log('loadAroundXZwithR(): ' + tmp);
 
 		console.log(sc['world'].defaults);
 
-		console.log('unloadChunk(0, 0) ... ' + sc['world'].attributes.unloadChunk(0, 0) );
+/*
+		var foo = [];
+		foo[-6] = -6;
+		foo[-5] = -5;
+		foo[-4] = -4;
+		for(var i = 0; i < foo.length; i++) {
+			console.log('for: ' + i + ' : ' + foo[i]);
+		}
+		console.log('foo.length: ' + foo.length);
+		console.log('foo: ' + foo);
 
+		for(var k in foo) {
+			console.log('key: ' + k + ' val: ' + foo[k]);
+		}
+		console.log('foo[-5]: ' + foo[-5]);
+*/
 		$("#cr-stage").click(function(e) {
 			console.log("Click registered");
 			sc['bird'].attributes.mouseHandler(e);
