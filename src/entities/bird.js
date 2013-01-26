@@ -1,6 +1,7 @@
 Bird = BaseEntity.extend({
 	defaults: {
         'speed' : 2,
+				'acc' : 1,
         'frame' : 0,
         'width': 0,   // width
         'height': 0,  // height
@@ -56,28 +57,29 @@ Bird = BaseEntity.extend({
 								var v_array = [];
 								while(v <= model.get('speed')) {
 									v_array.push(v);
-									v = v + 1 // Add acceleration
+									v = v + model.get('acc'); // Add acceleration
 									
 								}
 								var totalDist = _.reduce(v_array,function (memo,num) { return memo+num }, 0);
 								
 								model.set('accdist',totalDist);
+								console.log(model.get('accdist'));
 								model.set('newpath', false);
 							}
 							if(model.get('followpath')) {
 								
-								
+								var ovec = model.get('origvec2');
 								// Acceleration phase
 								if(model.get('origpathdist') - model.get('pathdist') < model.get('accdist')) {
 									
-									model.set('vec2',model.get('vec2').add(model.get('origvec2')));
+									model.set('vec2',model.get('vec2').add(ovec.scale(model.get('acc'))));
 								// Normal phase
 								} else if(model.get('origpathdist') - model.get('pathdist') >= model.get('accdist') && model.get('pathdist') > model.get('accdist')) {
 								
 								// Deceleration phase
 								} else {
 									
-									model.set('vec2',model.get('vec2').add(model.get('origvec2').negate()));
+									model.set('vec2',model.get('vec2').add(ovec.scale(model.get('acc')).negate()));
 								}
 								var vec = model.get('vec2');
 								model.set('pathdist',model.get('pathdist')-vec.magnitude());
