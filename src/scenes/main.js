@@ -38,6 +38,10 @@ Crafty.scene("main", function() {
 				//Crafty.e("2D, Canvas, grass_01")
 				//.attr({ x: i * 63, y: j * 63, z: 1 });
 				var tiletexture = sc['world'].attributes.getTileTexture(i, j);
+				// draw grass behind the trees
+				if(tiletexture === 'tree1' || tiletexture === 'tree2') {
+					sc['tile_x' + i + '_z'+ j] = new Tile('grass1', i * 64, j * 64, 190);
+				}
 				sc['tile_x' + i + '_z'+ j] = new Tile(tiletexture, i * 64, j * 64);
 /*
 				var tiletype = sc['world'].attributes.getTileType(i, j);

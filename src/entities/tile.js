@@ -1,12 +1,15 @@
 Tile = BaseEntity.extend({
 	defaults: {
 	},
-	initialize: function(tiletype, x, y) {
+	initialize: function(tiletype, x, y, z) {
 		var model = this;
 		var entity = Crafty.e("2D, "+gameContainer.conf.get('renderType')+", Multiway, Keyboard, "+tiletype+", SpriteAnimation, Mouse, Collision, MouseHover");
+		if(z === undefined) {
+			z = 200;
+		}
 
 		entity
-		    .attr({x: x, y: y, z: 201})
+		    .attr({x: x, y: y, z: z})
 		    .bind('EnterFrame', function(e){
 		    	//stub
 		    })

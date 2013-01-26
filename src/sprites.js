@@ -58,7 +58,7 @@ Sprites = Backbone.Model.extend({
 					'waterborder_ml' : [2, 1],
 					'waterborder_mr' : [4, 1],
 					'waterborder_bl' : [2, 2],
-					'waterborder_bl' : [3, 2],
+					'waterborder_bc' : [3, 2],
 					'waterborder_br' : [4, 2],
 					'tree1' : [0, 1],
 					'tree2' : [1, 1]

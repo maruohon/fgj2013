@@ -146,13 +146,17 @@ World = BaseEntity.extend({
 				var chunkData = model.get('terrainData')[chunk_x][chunk_z];
 				var rnd = 0;
 
-				for(var i = 0; i < size; i++) {
+				// Trees can only be geenrated one away from the right border of a chunk,
+				// because the other half of the tree texture has to fit on the right side
+				// of the initial tree trunk.
+				for(var i = 0; i < (size - 1); i++) {
 					for(var j = 0; j < size; j++) {
 						if(chunkData[i][j][0][0] === tileIDs.tileIDgrass) {
 							rnd = Math.random();
 //							console.log('rnd: ' + rnd);
 							if(rnd >= (1 - model.get('treePercentage'))) {
-								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDtree1, 'tree1'];
+								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDtree1, 'tree1']; // FIXME trees should be on the [1] layer
+								model.get('terrainData')[chunk_x][chunk_z][i + 1][j][0] = [tileIDs.tileIDtree1, 'tree2']; // FIXME trees should be on the [1] layer
 							}
 						}
 					}
@@ -171,6 +175,16 @@ World = BaseEntity.extend({
 //						if(chunkData[i][j] === tileIDs.tileIDgrass) {
 							if(Math.random() >= (1 - model.get('waterPercentage'))) {
 								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDwater, 'water1'];
+								// Set the neighboring blocks as water borders
+								// FIXME we should check the tile types and use some fancier logic
+								model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_bl'];
+								model.get('terrainData')[chunk_x][chunk_z][i + 0][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_bc'];
+								model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_br'];
+								model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_ml'];
+								model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_mr'];
+								model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_tl'];
+								model.get('terrainData')[chunk_x][chunk_z][i + 0][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_tc'];
+								model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_tr'];
 							}
 //						}
 					}
