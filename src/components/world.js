@@ -166,8 +166,8 @@ World = BaseEntity.extend({
 				var numtiles = size * size;
 				var chunkData = model.get('terrainData')[chunk_x][chunk_z][0];
 
-				for(var i = 0; i < size; i++) {
-					for(var j = 0; j < size; j++) {
+				for(var i = 1; i < (size - 1); i++) {
+					for(var j = 1; j < (size - 1); j++) {
 //						if(chunkData[i][j] === tileIDs.tileIDgrass) {
 							if(Math.random() >= (1 - model.get('waterPercentage'))) {
 								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = tileIDs.tileIDwater;
@@ -182,6 +182,14 @@ World = BaseEntity.extend({
 
 		model.set({'loadChunk': function(chunk_x, chunk_z) {
 			console.log('loadChunk(' + chunk_x + ', ' + chunk_z + ')');
+			if(model.attributes.chunkIsLoaded(chunk_x, chunk_z) === true) {
+				return true;
+			}
+
+				model.attributes.generateChunk(chunk_x, chunk_z);
+				model.attributes.generateFeatures(chunk_x, chunk_z);
+				return true;
+
 			var tmp = localStorage.getItem('TerrainData_x' + chunk_x + '_z' + chunk_z);
 
 			if(tmp === null) {
@@ -250,6 +258,18 @@ World = BaseEntity.extend({
 			}
 
 			return true;
+		}});
+
+		model.set({'getTileType': function(x, z) {
+			console.log('getTileType(' + x + ', ' + z + ')');
+			var type = 0;
+			var cs = model.get('chunkSize');
+			var cx = Math.floor(x / cs);
+			var cz = Math.floor(z / cs);
+			type = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0]; // FIXME verify this
+			console.log('getTileType(): ' + type);
+
+			return type;
 		}});
 
 		model.set({'unloadWorld': function() {

@@ -24,7 +24,12 @@ Crafty.scene("main", function() {
 		sc['bird'] = new Bird();
 //		sc['grass'] = new Tile('grass01');
 		//Crafty.viewport.follow(sc['bird'].get('entity'), 0, 0);
-		
+
+		sc['world'] = new World();
+		sc['world'].attributes.loadAroundXZwithR(0, 0, 30)
+
+		console.log(sc['world'].defaults);
+
 		for (var i = 0; i < 26; i++) {
 			for (var j = 0; j < 16; j++) {
 				//place grass on all tiles
@@ -32,13 +37,27 @@ Crafty.scene("main", function() {
 				//console.log(gameContainer.conf.get('renderType'));
 				//Crafty.e("2D, Canvas, grass_01")
 				//.attr({ x: i * 63, y: j * 63, z: 1 });
-				sc['tile'+ i +'x'+ j] = new Tile('grass1', i*64, j*64);
+				var tiletype = sc['world'].attributes.getTileType(i, j);
+				// grass
+				if(tiletype === 1) {
+					sc['tile_x' + i + '_z'+ j] = new Tile('grass1', i * 64, j * 64);
+				}
+				// stone
+				if(tiletype === 2) {
+					sc['tile_x' + i + '_z'+ j] = new Tile('tree2', i * 64, j * 64);
+				}
+				// tree
+				if(tiletype === 3) {
+					sc['tile_x' + i + '_z'+ j] = new Tile('tree1', i * 64, j * 64);
+				}
+				// water
+				else if(tiletype === 4) {
+					sc['tile_x' + i + '_z'+ j] = new Tile('water1', i * 64, j * 64);
+				}
 			}
 		}
 
-		sc['world'] = new World();
-
-		var tmp = "";
+//		var tmp = "";
 /*
 		tmp = sc['world'].attributes.chunkIsLoaded(0, 0);
 		console.log('chunkIsLoaded 0, 0: ' + tmp);
@@ -50,10 +69,10 @@ Crafty.scene("main", function() {
 */
 //		tmp = sc['world'].attributes.unloadChunk(0, 0);
 //		console.log('unloadChunk(0, 0) ... ' + tmp);
-		tmp = sc['world'].attributes.loadAroundXZwithR(3, 3, 2);
-		console.log('loadAroundXZwithR(): ' + tmp);
+//		tmp = sc['world'].attributes.loadAroundXZwithR(7, 7, 2);
+//		console.log('loadAroundXZwithR(): ' + tmp);
 
-		console.log(sc['world'].defaults);
+//		console.log(sc['world'].defaults);
 
 /*
 		var foo = [];

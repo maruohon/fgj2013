@@ -52,6 +52,14 @@ Sprites = Backbone.Model.extend({
 				'elements': {
 					'grass1' : [0, 0],
 					'water1' : [1, 0],
+					'waterborder_tl' : [2, 0],
+					'waterborder_tc' : [3, 0],
+					'waterborder_tr' : [4, 0],
+					'waterborder_ml' : [2, 1],
+					'waterborder_mr' : [4, 1],
+					'waterborder_bl' : [2, 2],
+					'waterborder_bl' : [3, 2],
+					'waterborder_br' : [4, 2],
 					'tree1' : [0, 1],
 					'tree2' : [1, 1]
 				}
