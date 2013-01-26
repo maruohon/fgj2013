@@ -10,7 +10,7 @@ World = BaseEntity.extend({
 	defaults: {
 		'terrainType'		: 'grass',	// The main terrain type (grass, stone)
 		'terrainFeatures'	: { 'water' : true, 'stone' : true, 'trees' : true },	// Additional terrain features that will be generated (water, stone, grass, trees)
-		'chunkSize'			: 4,
+		'chunkSize'			: 8,
 		'treePercentage'	: 0.2,	// On average, 10% of (grass) tiles can be covered with trees
 		'stoneOnGrassPcnt'	: 0.03,	// Stone on grass percentage
 		'grassOnStonePcnt'	: 0.2,	// Grass on stone percentage
@@ -183,10 +183,6 @@ World = BaseEntity.extend({
 		model.set({'loadChunk': function(chunk_x, chunk_z) {
 			console.log('loadChunk(' + chunk_x + ', ' + chunk_z + ')');
 			var tmp = localStorage.getItem('TerrainData_x' + chunk_x + '_z' + chunk_z);
-
-				model.attributes.generateChunk(chunk_x, chunk_z);
-				model.attributes.generateFeatures(chunk_x, chunk_z);
-				return true;
 
 			if(tmp === null) {
 //				console.log('loadChunk(): localStorage.getItem() returned null');
