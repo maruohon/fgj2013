@@ -56,33 +56,36 @@ World = BaseEntity.extend({
 			}
 
 			if(type === 'grass') {
-				// Layer 0 is the ground level terrain, layer 1 in things above ground, like trees
-				chunkData[0] = [];
-				chunkData[1] = [];
 				for(var i = 0; i < size; i++) {
-					chunkData[0][i] = [];
-					chunkData[1][i] = [];
+					chunkData[i] = [];
 					for(var j = 0; j < size; j++) {
-						chunkData[0][i][j] = tileIDs.tileIDgrass;
-						chunkData[1][i][j] = tileIDs.tileIDair;
+						chunkData[i][j] = [];
+						// Layer 0 is the ground level terrain
+						chunkData[i][j][0] = tileIDs.tileIDgrass;
+						// Layer 1 is things above ground, like trees
+						chunkData[i][j][1] = tileIDs.tileIDair;
 					}
 				}
-				model.get('terrainData')[chunk_x] = [];
+				if(model.get('terrainData')[chunk_x] === undefined) {
+					model.get('terrainData')[chunk_x] = [];
+				}
 				model.get('terrainData')[chunk_x][chunk_z] = chunkData.slice();
 //				console.log('generateChunk(): ' + chunkData);
 			}
 			else if(type === 'stone') {
-				chunkData[0] = [];
-				chunkData[1] = [];
 				for(var i = 0; i < size; i++) {
-					chunkData[0][i] = [];
-					chunkData[1][i] = [];
+					chunkData[i] = [];
 					for(var j = 0; j < size; j++) {
-						chunkData[0][i][j] = tileIDs.tileIDstone;
-						chunkData[1][i][j] = tileIDs.tileIDair;
+						chunkData[i][j] = [];
+						// Layer 0 is the ground level terrain
+						chunkData[i][j][0] = tileIDs.tileIDstone;
+						// Layer 1 is things above ground, like trees
+						chunkData[i][j][1] = tileIDs.tileIDair;
 					}
 				}
-				model.get('terrainData')[chunk_x] = [];
+				if(model.get('terrainData')[chunk_x] === undefined) {
+					model.get('terrainData')[chunk_x] = [];
+				}
 				model.get('terrainData')[chunk_x][chunk_z] = chunkData.slice();
 			}
 
@@ -108,12 +111,12 @@ World = BaseEntity.extend({
 			if(model.get('terrainType') === 'stone') {
 				var size = model.get('chunkSize');
 				var numtiles = size * size;
-				var chunkData = model.get('terrainData')[chunk_x][chunk_z][0];
+				var chunkData = model.get('terrainData')[chunk_x][chunk_z];
 
 				for(var i = 0; i < size; i++) {
 					for(var j = 0; j < size; j++) {
 						if(Math.random() >= (1 - model.get('grassOnStonePcnt'))) {
-							model.get('terrainData')[chunk_x][chunk_z][0][i][j] = tileIDs.tileIDgrass;
+							model.get('terrainData')[chunk_x][chunk_z][i][j][0] = tileIDs.tileIDgrass;
 						}
 					}
 				}
@@ -129,7 +132,7 @@ World = BaseEntity.extend({
 					for(var j = 0; j < size; j++) {
 //						if(chunkData[i][j] === tileIDs.tileIDgrass) {
 							if(Math.random() >= (1 - model.get('stoneOnGrassPcnt'))) {
-								model.get('terrainData')[chunk_x][chunk_z][0][i][j] = tileIDs.tileIDstone;
+								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = tileIDs.tileIDstone;
 							}
 //						}
 					}
@@ -149,7 +152,7 @@ World = BaseEntity.extend({
 							rnd = Math.random();
 //							console.log('rnd: ' + rnd);
 							if(rnd >= (1 - model.get('treePercentage'))) {
-								model.get('terrainData')[chunk_x][chunk_z][1][i][j] = tileIDs.tileIDtree1;
+								model.get('terrainData')[chunk_x][chunk_z][i][j][1] = tileIDs.tileIDtree1;
 							}
 						}
 					}
@@ -167,7 +170,7 @@ World = BaseEntity.extend({
 					for(var j = 0; j < size; j++) {
 //						if(chunkData[i][j] === tileIDs.tileIDgrass) {
 							if(Math.random() >= (1 - model.get('waterPercentage'))) {
-								model.get('terrainData')[chunk_x][chunk_z][0][i][j] = tileIDs.tileIDwater;
+								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = tileIDs.tileIDwater;
 							}
 //						}
 					}
@@ -253,7 +256,19 @@ World = BaseEntity.extend({
 			return true;
 		}});
 
+		model.set({'unloadWorld': function() {
+			console.log('unloadWorld()');
+			// Unload all chunks
+			for(var i in model.get('terrainData')) {
+				console.log('for i in ... :' + i);
+				for(var j in model.get('terrainData')[i]) {
+					model.attributes.unloadChunk(i, j);
+				}
+			}
+		}});
+
 		model.set({'deleteWorld': function() {
+			// Delete all the chunks from localStorage
 			localStorage.clear();
 
 			return true;
