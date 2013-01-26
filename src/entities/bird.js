@@ -15,16 +15,17 @@ Bird = BaseEntity.extend({
 		'pathdist' : 0,
 		'origpathdist' : 0,
 		'scroll': [0,0],
-		'goingRight': true
+		'goingRight': true,
+		'soundPlaying': ""
 	},
 	initialize: function(){
 		var model = this;
 
-		var entity = Crafty.e("2D, "+gameContainer.conf.get('renderType')+", Keyboard, bird, SpriteAnimation");
+		var entity = Crafty.e("2D, "+gameContainer.conf.get('renderType')+", Keyboard, bird, Mouse, SpriteAnimation");
 		model.set('width', entity.w);
 		model.set('height', entity.h);
 		entity
-		.attr({x: model.get('x'), y: model.get('y'), z: 300})
+		.attr({x: model.get('x'), y: model.get('y'), z: 500})
 		//.collision(new Crafty.polygon([21,63],[40,55],[59,52],[71,52],[74,39],[83,24],[102,13],[117,13],[119,13],[136,24],[147,37],[151,51],[174,54],[190,58],[195,62],[200,68],[196,78],[180,85],[148,91],[102,92],[70,91],[46,86],[24,80],[17,68],[18,64]))
 		.bind('EnterFrame', function(e){
 
@@ -34,9 +35,44 @@ Bird = BaseEntity.extend({
 				_.each(wormList,function(item,i) {
 					var wx = item.attributes.entity.x;
 					var wy = item.attributes.entity.y;
-					dist[i] = Crafty.math.squaredDistance(wx,wy,model.get('x'),model.get('y'));
+				
+					dist[i] = Crafty.math.squaredDistance(wx,wy,model.get('entity').x,model.get('entity').y);
 				});
-
+				dist.sort(function(a,b) { return a-b;});
+				
+				var sDist = dist.shift();
+	
+				if(sDist <= 8200) {
+					if(model.get('soundPlaying') !== "hb_very_fast") {
+						Crafty.audio.stop(model.get('soundPlaying'));
+						Crafty.audio.play("hb_very_fast",-1,0.2);
+						model.set('soundPlaying',"hb_very_fast");
+					}
+				} else if(sDist > 8200 && sDist <= 65536) {
+					if(model.get('soundPlaying') !== "hb_normal") {
+						Crafty.audio.stop(model.get('soundPlaying'));
+						Crafty.audio.play("hb_normal",-1,0.1);
+						model.set('soundPlaying',"hb_normal");
+					}
+				} else if(sDist > 65536 && sDist <= 147456) {
+					if(model.get('soundPlaying') !== "hb_slow") {
+						Crafty.audio.stop(model.get('soundPlaying'));
+						Crafty.audio.play("hb_slow",-1,0.1);
+						model.set('soundPlaying',"hb_slow");
+					}
+				} else if(sDist > 147456 && sDist <= 250000) {
+					if(model.get('soundPlaying') !== "hb_very_slow") {
+						Crafty.audio.stop(model.get('soundPlaying'));
+						Crafty.audio.play("hb_very_slow",-1,0.1);
+						model.set('soundPlaying',"hb_very_slow");
+					}
+				} else {
+						if(model.get('soundPlaying') !== "stopped") {
+							Crafty.audio.stop(model.get('soundPlaying'));
+							model.set('soundPlaying',"stopped");
+						}
+				}
+				
 				model.set('distcalcticks', 30);
 			} else {
 				model.set('distcalcticks',model.get('distcalcticks')-1);
@@ -183,14 +219,18 @@ Bird = BaseEntity.extend({
 
 		})       
 		.bind('Click', function(e) {
+			
 			// Try to eat
 			// Check tile
 			var tilex = Math.round(model.get('entity').x/64);
 			var tiley = Math.round(model.get('entity').y/64);
 			
-			_.each(wormList, function(worm, i) {
+			$.each(wormList, function(i,worm) {
 				if(worm.get('tilex') === tilex && worm.get('tiley') === tiley) {
-					worm.destroy();
+					console.log("Got a worm!");
+					worm.get('entity').destroy();
+					wormList.splice(i,1);
+					return false;
 				}
 			});
 			
