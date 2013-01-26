@@ -7,11 +7,11 @@ Bird = BaseEntity.extend({
         'x': 100,       // x
         'y': 100,       // y
         'r': 0,       // rotation (not used yet)
-        'xspeed': 0,  // x speed
-        'yspeed': 0,  // y speed
-        'xtarget': 100, // target x (will overwrite speed)
-        'ytarget': 100,  // target y (will overwrite speed)
-				'distcalcticks': 30
+				'distcalcticks': 30,
+				'newpath' : false,
+				'followpath' : false,
+				'pathdist' : 0,
+				'origpathdist' : 0
     },
     initialize: function(){
     	var model = this;
@@ -38,6 +38,62 @@ Bird = BaseEntity.extend({
 								model.set('distcalcticks',model.get('distcalcticks')-1);
 							}
 							
+							if(model.get('newpath')){
+								model.set({'followpath' : true});
+							
+								var wx = model.get('entity').x;
+								var wy = model.get('entity').y;
+								var angle = Math.atan2(model.get('targety')-wy,model.get('targetx')-wx);
+								console.log(angle+" "+wx+" "+wy+" "+model.get('targety')+" "+model.get('targetx'));
+								var vect = new Crafty.math.Vector2D(Math.cos(angle),Math.sin(angle));
+								model.set({'vec2' : vect.normalize()});
+								model.set({'origvec2' : model.get('vec2')});
+								model.set({'pathdist' : Crafty.math.distance(wx,wy,model.get('targetx'),model.get('targety'))});
+								model.set({'origpathdist' : Crafty.math.distance(wx,wy,model.get('targetx'),model.get('targety'))});
+								
+								// Compute the distance required to accelerate and decelerate to desired speed
+								var v = 0;
+								var v_array = [];
+								while(v <= model.get('speed')) {
+									v_array.push(v);
+									v = v + 1 // Add acceleration
+									
+								}
+								var totalDist = _.reduce(v_array,function (memo,num) { return memo+num }, 0);
+								
+								model.set('accdist',totalDist);
+								model.set('newpath', false);
+							}
+							if(model.get('followpath')) {
+								
+								
+								// Acceleration phase
+								if(model.get('origpathdist') - model.get('pathdist') < model.get('accdist')) {
+									
+									model.set('vec2',model.get('vec2').add(model.get('origvec2')));
+								// Normal phase
+								} else if(model.get('origpathdist') - model.get('pathdist') >= model.get('accdist') && model.get('pathdist') > model.get('accdist')) {
+								
+								// Deceleration phase
+								} else {
+									
+									model.set('vec2',model.get('vec2').add(model.get('origvec2').negate()));
+								}
+								var vec = model.get('vec2');
+								model.set('pathdist',model.get('pathdist')-vec.magnitude());
+								model.get('entity').x += vec.x;
+								model.get('entity').y += vec.y;
+								
+								if(model.get('pathdist') <= 1) {
+									model.set('followpath',false);
+								}
+									
+								if(Math.abs(model.get('targetx')-model.get('entity').x) <= 1 && Math.abs(model.get('targety')-model.get('entity').y) <= 1 ) {
+									model.set('followpath',false);
+								}
+							
+							}
+							
             })
             .bind('KeyDown', function () {
             	
@@ -53,10 +109,9 @@ Bird = BaseEntity.extend({
     	model.set({'entity' : entity });
 			model.set({'moveTo' : function (x,y) {
 				console.log(x+" "+y);
-				model.set({'targetx' : x-model.get('x')});
-				model.set({'targety' : y-model.get('y')});
-				model.attributes.entity.x = x;
-				model.attributes.entity.y = y;
+				model.set({'targetx' : x});
+				model.set({'targety' : y});
+				model.set({'newpath' : true});
 			}});
 			model.set({'mouseHandler' : function (e) {
 			
