@@ -1,8 +1,9 @@
 Bird = BaseEntity.extend({
 	defaults: {
-		'speed' : 4,
-		'acc' : 0.2,
+		'speed' : 2,
+		'acc' : 0.1,
 		'frame' : 0,
+		'animFrame' : 0,
 		'width': 0,   // width
 		'height': 0,  // height
 		'x': 100,       // x
@@ -13,7 +14,8 @@ Bird = BaseEntity.extend({
 		'followpath' : false,
 		'pathdist' : 0,
 		'origpathdist' : 0,
-		'scroll': [0,0]
+		'scroll': [0,0],
+		'goingRight': true
 	},
 	initialize: function(){
 		var model = this;
@@ -39,38 +41,40 @@ Bird = BaseEntity.extend({
 			} else {
 				model.set('distcalcticks',model.get('distcalcticks')-1);
 			}
-			
 			if(model.get('newpath')){
 				model.set({'followpath' : true});
 
 				var wx = model.get('entity').x;
 				var wy = model.get('entity').y;
+				
 				var angle = Math.atan2(model.get('targety')-wy,model.get('targetx')-wx);
 
 				if(angle >= -Math.PI/4 && angle < Math.PI/4) {
-					entity.__coord[0] = 0;
+					//entity.__coord[0] = 0;
 					entity.__coord[1] = 64;
 				}
 				if(angle >= Math.PI/4 && angle < Math.PI*(3/4)) {
-					entity.__coord[0] = 0;
+					//entity.__coord[0] = 0;
 					entity.__coord[1] = 128;
 				}
 
 				if(angle >= Math.PI*(3/4) && angle < Math.PI+0.001) {
-					entity.__coord[0] = 0;
+					//entity.__coord[0] = 0;
 					entity.__coord[1] = 0;
+					model.set('goingRight',false);
 				}
 				if(angle >= -Math.PI && angle < -Math.PI*(3/4)) {
-					entity.__coord[0] = 0;
+					//entity.__coord[0] = 0;
 					entity.__coord[1] = 0;
+					model.set('goingRight',false);
 				}
 
 				if(angle >= -Math.PI*(3/4) && angle < -Math.PI/4) {
-					entity.__coord[0] = 0;
+					//entity.__coord[0] = 0;
 					entity.__coord[1] = 192;
 				}
 
-				console.log(angle+" "+wx+" "+wy+" "+model.get('targety')+" "+model.get('targetx'));
+				//console.log(angle+" "+wx+" "+wy+" "+model.get('targety')+" "+model.get('targetx'));
 				var vect = new Crafty.math.Vector2D(Math.cos(angle),Math.sin(angle));
 				model.set({'vec2' : vect.normalize()});
 				model.set({'origvec2' : model.get('vec2')});
@@ -88,26 +92,37 @@ Bird = BaseEntity.extend({
 				var totalDist = _.reduce(v_array,function (memo,num) { return memo+num; }, 0);
 
 				model.set('accdist',totalDist);
-				console.log(model.get('accdist'));
+				//console.log(model.get('accdist'));
 				model.set('newpath', false);
 			}
 
 			if(model.get('followpath')) {
-
+				if(model.get('frame') < 8) {
+					model.set('frame', model.get('frame')+1);
+				} else {
+					model.set('frame', 0);
+					model.set('animFrame', model.get('animFrame') + 1);
+					if(model.get('animFrame') > 3) {
+						model.set('animFrame', 0);
+					}
+				}
+				
+				
+				
 				var ovec = model.get('origvec2').clone();
 				// Acceleration phase
 				if(model.get('origpathdist') - model.get('pathdist') < model.get('accdist')) {
-					console.log("Acc:"+model.get('vec2'));
+					//console.log("Acc:"+model.get('vec2'));
 					model.set('vec2',model.get('vec2').add(ovec.scale(model.get('acc'))));
 					// Normal phase
 				} else if(model.get('origpathdist') - model.get('pathdist') >= model.get('accdist') && model.get('pathdist') > model.get('accdist')) {
-					console.log("Norm "+model.get('pathdist')+":"+model.get('vec2'));
+					//console.log("Norm "+model.get('pathdist')+":"+model.get('vec2'));
 					// Deceleration phase
 				} else if (model.get('pathdist') < model.get('accdist') && model.get('pathdist') >= 0){
-					console.log("Dec:"+model.get('vec2'));
+					//console.log("Dec:"+model.get('vec2'));
 					model.set('vec2',model.get('vec2').subtract(ovec.scale(model.get('acc'))));
 				} else {
-					console.log("Ab");
+					//console.log("Ab");
 					model.set('vec2', new Crafty.math.Vector2D(0,0));
 					model.set('followpath',false);
 					model.get('entity').x = model.get('targetx');
@@ -127,11 +142,41 @@ Bird = BaseEntity.extend({
 				
 				if(model.get('vec2').magnitude() < 0.001 ||(Math.abs(model.get('targetx')-model.get('entity').x) <= 2 && Math.abs(model.get('targety')-model.get('entity').y) <= 2) ) {
 					model.set('followpath',false);
+					model.set('animFrame', 0);
+					/*if(model.get('goingRight'))
+						entity.__coord[1] = 64;
+					else
+						entity.__coord[1] = 0;*/
 					model.get('entity').x = model.get('targetx');
 					model.get('entity').y = model.get('targety');
 				}
 
+			} else {
+			
+				// idle pose
+				
+				if(model.get('frame') < (80+Math.random()*100)) {
+					model.set('frame', model.get('frame')+1);
+				} else {
+					model.set('frame', 0);
+					if(model.get('animFrame') == 0) {
+					
+						model.set('animFrame', 2);
+						console.log('a');
+						entity.__coord[1] = Math.floor(Math.random()*2)*64;
+					} else {
+						
+						model.set('animFrame', 0);
+						console.log('b');
+						entity.__coord[1] = 0;
+						console.log(entity);
+					}
+					model.get('entity').x = model.get('targetx');
+					model.get('entity').y = model.get('targety');
+				}
+				
 			}
+			model.get('entity').__coord[0] = model.get('animFrame')*64;
 
 		})
 		.bind('KeyDown', function () {
