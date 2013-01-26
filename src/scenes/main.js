@@ -10,6 +10,7 @@ Crafty.scene("main", function() {
         "src/entities/worm.js",
         "src/entities/tile.js",
 				"src/entities/bird.js",
+		"src/components/world.js",
         "src/interfaces/info.js"
 	];
 	
@@ -33,6 +34,12 @@ Crafty.scene("main", function() {
 				sc['tile'+ i +'x'+ j] = new Tile('grass01', i*64, j*64);
 			}
 		}
+
+		sc['world'] = new World();
+		console.log('Exists 0, 0: ' + sc['world'].attributes.chunkExists(0, 0));
+		console.log('Generating chunk at 0, 0 ...' + sc['world'].attributes.generateChunk(0, 0, 'grass'));
+		console.log('Generating features at 0, 0 ...' + sc['world'].attributes.generateFeatures(0, 0));
+		console.log(sc['world'].defaults);
 		
 		$("#cr-stage").click(function(e) {
 			console.log("Click registered");
