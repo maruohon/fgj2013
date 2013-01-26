@@ -31,7 +31,7 @@ Crafty.scene("main", function() {
 				//console.log(gameContainer.conf.get('renderType'));
 				//Crafty.e("2D, Canvas, grass_01")
 				//.attr({ x: i * 63, y: j * 63, z: 1 });
-				sc['tile'+ i +'x'+ j] = new Tile('grass1', i*64, j*64);
+				sc['tile'+ i +'x'+ j] = new Tile('grass01', i*64, j*64);
 			}
 		}
 		

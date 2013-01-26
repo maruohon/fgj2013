@@ -1,7 +1,7 @@
 Bird = BaseEntity.extend({
 	defaults: {
-		'speed' : 2,
-		'acc' : 1,
+		'speed' : 4,
+		'acc' : 0.2,
 		'frame' : 0,
 		'width': 0,   // width
 		'height': 0,  // height
@@ -47,25 +47,25 @@ Bird = BaseEntity.extend({
 				var wy = model.get('entity').y;
 				var angle = Math.atan2(model.get('targety')-wy,model.get('targetx')-wx);
 
-				if(angle >= -3.14/4 && angle < 3.14/4) {
+				if(angle >= -Math.PI/4 && angle < Math.PI/4) {
 					entity.__coord[0] = 0;
 					entity.__coord[1] = 64;
 				}
-				if(angle >= 3.14/4 && angle < 3.14*(3/4)) {
+				if(angle >= Math.PI/4 && angle < Math.PI*(3/4)) {
 					entity.__coord[0] = 0;
 					entity.__coord[1] = 128;
 				}
 
-				if(angle >= 3.14*(3/4) && angle < 3.14) {
+				if(angle >= Math.PI*(3/4) && angle < Math.PI+0.001) {
 					entity.__coord[0] = 0;
 					entity.__coord[1] = 0;
 				}
-				if(angle >= -3.14 && angle < -3.14*(3/4)) {
+				if(angle >= -Math.PI && angle < -Math.PI*(3/4)) {
 					entity.__coord[0] = 0;
 					entity.__coord[1] = 0;
 				}
 
-				if(angle >= -3.14*(3/4) && angle < -3.14/4) {
+				if(angle >= -Math.PI*(3/4) && angle < -Math.PI/4) {
 					entity.__coord[0] = 0;
 					entity.__coord[1] = 192;
 				}
@@ -94,20 +94,24 @@ Bird = BaseEntity.extend({
 
 			if(model.get('followpath')) {
 
-				var ovec = model.get('origvec2');
+				var ovec = model.get('origvec2').clone();
 				// Acceleration phase
 				if(model.get('origpathdist') - model.get('pathdist') < model.get('accdist')) {
-
+					console.log("Acc:"+model.get('vec2'));
 					model.set('vec2',model.get('vec2').add(ovec.scale(model.get('acc'))));
 					// Normal phase
 				} else if(model.get('origpathdist') - model.get('pathdist') >= model.get('accdist') && model.get('pathdist') > model.get('accdist')) {
-
+					console.log("Norm "+model.get('pathdist')+":"+model.get('vec2'));
 					// Deceleration phase
 				} else if (model.get('pathdist') < model.get('accdist') && model.get('pathdist') >= 0){
-
-					model.set('vec2',model.get('vec2').add(ovec.scale(model.get('acc')).negate()));
+					console.log("Dec:"+model.get('vec2'));
+					model.set('vec2',model.get('vec2').subtract(ovec.scale(model.get('acc'))));
 				} else {
+					console.log("Ab");
 					model.set('vec2', new Crafty.math.Vector2D(0,0));
+					model.set('followpath',false);
+					model.get('entity').x = model.get('targetx');
+					model.get('entity').y = model.get('targety');
 					// stub
 				}
 				var vec = model.get('vec2');
@@ -117,14 +121,14 @@ Bird = BaseEntity.extend({
 				
 				Crafty.viewport.scroll('_x', -model.get('entity').x+Crafty.viewport.width/2);
 				Crafty.viewport.scroll('_y', -model.get('entity').y+Crafty.viewport.height/2);
-/*				if(model.get('pathdist') <= 1) {
-					model.set('followpath',false);
-				}
-*/
-				//Crafty.viewport.centerOn(this, 10);
+
+				model.get('scroll')[0] = -model.get('entity').x+Crafty.viewport.width/2;
+				model.get('scroll')[1] = -model.get('entity').y+Crafty.viewport.height/2;
 				
-				if(Math.abs(model.get('targetx')-model.get('entity').x) <= 1 && Math.abs(model.get('targety')-model.get('entity').y) <= 1 ) {
+				if(model.get('vec2').magnitude() < 0.001 ||(Math.abs(model.get('targetx')-model.get('entity').x) <= 2 && Math.abs(model.get('targety')-model.get('entity').y) <= 2) ) {
 					model.set('followpath',false);
+					model.get('entity').x = model.get('targetx');
+					model.get('entity').y = model.get('targety');
 				}
 
 			}
@@ -164,8 +168,8 @@ Bird = BaseEntity.extend({
 			var tiley = Math.floor(y/64)*64;
 			
 			console.log(tilex+" x "+tiley);
-			model.set({'targetx' : tilex+32});
-			model.set({'targety' : tiley+32});
+			model.set({'targetx' : tilex});
+			model.set({'targety' : tiley});
 			model.set({'newpath' : true});
 		}});
 		model.set({'mouseHandler' : function (e) {
