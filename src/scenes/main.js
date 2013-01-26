@@ -36,11 +36,20 @@ Crafty.scene("main", function() {
 		}
 
 		sc['world'] = new World();
-		console.log('Exists 0, 0: ' + sc['world'].attributes.chunkExists(0, 0));
-		console.log('Generating chunk at 0, 0 ...' + sc['world'].attributes.generateChunk(0, 0, 'grass'));
-		console.log('Generating features at 0, 0 ...' + sc['world'].attributes.generateFeatures(0, 0));
+
+		var isLoaded = sc['world'].attributes.chunkIsLoaded(0, 0);
+		console.log('chunkIsLoaded 0, 0: ' + isLoaded);
+
+		if(isLoaded === false) {
+			console.log('loadChunk(0, 0) ... ' + sc['world'].attributes.loadChunk(0, 0) );
+//			console.log('generateChunk(0, 0) ...' + sc['world'].attributes.generateChunk(0, 0, 'grass'));
+//			console.log('generateFeatures(0, 0) ...' + sc['world'].attributes.generateFeatures(0, 0));
+		}
+
 		console.log(sc['world'].defaults);
-		
+
+		console.log('unloadChunk(0, 0) ... ' + sc['world'].attributes.unloadChunk(0, 0) );
+
 		$("#cr-stage").click(function(e) {
 			console.log("Click registered");
 			sc['bird'].attributes.mouseHandler(e);
