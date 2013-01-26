@@ -23,6 +23,8 @@ Crafty.scene("main", function() {
 				sc['tile'+ i +'x'+ j] = new Tile('grass01', i*64, j*64);
 			}
 		}
+		
+		
 		console.log('Moi');
 //		infc['info'] = new Info();
 	});

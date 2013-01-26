@@ -38,7 +38,12 @@ window.onload = function() {
 				.text('Loading...')
 				.textColor('#000')
 				.textFont({'size' : '24px', 'family': 'Arial'});
-
+			var mouseTracker = Crafty.e("2D, "+gameContainer.conf.get('renderType')+", Mouse").attr({ w:Crafty.viewport.width, h:Crafty.viewport.height, x:0, y:0 });
+		    mouseTracker.bind('Click', function(e) {
+		    	console.log('click');
+				//The Crafty.mousePos.x/y returns the mouse position in pixels inside the stage
+				//clickText.text("Clicked:"+ Crafty.mousePos.x +", "+ Crafty.mousePos.y);
+		    }); 
 			// load takes an array of assets and a callback when complete
 			Crafty.load(sprites.getPaths(), function() {
 				// array with local components
