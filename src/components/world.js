@@ -11,8 +11,8 @@ World = BaseEntity.extend({
 		'terrainType'		: 'grass',	// The main terrain type (grass, stone)
 		'terrainFeatures'	: { 'water' : true, 'stone' : true, 'trees' : true },	// Additional terrain features that will be generated (water, stone, grass, trees)
 		'chunkSize'			: 8,
-		'treePercentage'	: 0.2,	// On average, 10% of (grass) tiles can be covered with trees
-		'stoneOnGrassPcnt'	: 0.03,	// Stone on grass percentage
+		'treePercentage'	: 0.04,	// On average, xx % of (grass) tiles can be covered with trees
+		'stoneOnGrassPcnt'	: 0.01,	// Stone on grass percentage
 		'grassOnStonePcnt'	: 0.2,	// Grass on stone percentage
 		'waterPercentage'	: 0.05,
 		'terrainData'		: []
@@ -61,7 +61,7 @@ World = BaseEntity.extend({
 					for(var j = 0; j < size; j++) {
 						chunkData[i][j] = [];
 						// Layer 0 is the ground level terrain
-						chunkData[i][j][0] = tileIDs.tileIDgrass;
+						chunkData[i][j][0] = [tileIDs.tileIDgrass, 'grass1'];
 						// Layer 1 is things above ground, like trees
 						chunkData[i][j][1] = tileIDs.tileIDair;
 					}
@@ -78,7 +78,7 @@ World = BaseEntity.extend({
 					for(var j = 0; j < size; j++) {
 						chunkData[i][j] = [];
 						// Layer 0 is the ground level terrain
-						chunkData[i][j][0] = tileIDs.tileIDstone;
+						chunkData[i][j][0] = [tileIDs.tileIDstone, 'tree2'];
 						// Layer 1 is things above ground, like trees
 						chunkData[i][j][1] = tileIDs.tileIDair;
 					}
@@ -116,7 +116,7 @@ World = BaseEntity.extend({
 				for(var i = 0; i < size; i++) {
 					for(var j = 0; j < size; j++) {
 						if(Math.random() >= (1 - model.get('grassOnStonePcnt'))) {
-							model.get('terrainData')[chunk_x][chunk_z][i][j][0] = tileIDs.tileIDgrass;
+							model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDgrass, 'grass1'];
 						}
 					}
 				}
@@ -126,13 +126,13 @@ World = BaseEntity.extend({
 			if(features.hasOwnProperty('stone') && features.stone === true) {
 				var size = model.get('chunkSize');
 				var numtiles = size * size;
-				var chunkData = model.get('terrainData')[chunk_x][chunk_z][0];
+//				var chunkData = model.get('terrainData')[chunk_x][chunk_z];
 
 				for(var i = 0; i < size; i++) {
 					for(var j = 0; j < size; j++) {
-//						if(chunkData[i][j] === tileIDs.tileIDgrass) {
+//						if(chunkData[i][j][0][0] === tileIDs.tileIDgrass) {
 							if(Math.random() >= (1 - model.get('stoneOnGrassPcnt'))) {
-								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = tileIDs.tileIDstone;
+								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDstone, 'tree2'];
 							}
 //						}
 					}
@@ -143,16 +143,16 @@ World = BaseEntity.extend({
 			if(features.hasOwnProperty('trees') && features.trees === true) {
 				var size = model.get('chunkSize');
 				var numtiles = size * size;
-				var chunkData = model.get('terrainData')[chunk_x][chunk_z][0];
+				var chunkData = model.get('terrainData')[chunk_x][chunk_z];
 				var rnd = 0;
 
 				for(var i = 0; i < size; i++) {
 					for(var j = 0; j < size; j++) {
-						if(chunkData[i][j] === tileIDs.tileIDgrass) {
+						if(chunkData[i][j][0][0] === tileIDs.tileIDgrass) {
 							rnd = Math.random();
 //							console.log('rnd: ' + rnd);
 							if(rnd >= (1 - model.get('treePercentage'))) {
-								model.get('terrainData')[chunk_x][chunk_z][i][j][1] = tileIDs.tileIDtree1;
+								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDtree1, 'tree1'];
 							}
 						}
 					}
@@ -170,7 +170,7 @@ World = BaseEntity.extend({
 					for(var j = 1; j < (size - 1); j++) {
 //						if(chunkData[i][j] === tileIDs.tileIDgrass) {
 							if(Math.random() >= (1 - model.get('waterPercentage'))) {
-								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = tileIDs.tileIDwater;
+								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDwater, 'water1'];
 							}
 //						}
 					}
@@ -266,10 +266,22 @@ World = BaseEntity.extend({
 			var cs = model.get('chunkSize');
 			var cx = Math.floor(x / cs);
 			var cz = Math.floor(z / cs);
-			type = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0]; // FIXME verify this
+			type = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0][0]; // FIXME verify this
 			console.log('getTileType(): ' + type);
 
 			return type;
+		}});
+
+		model.set({'getTileTexture': function(x, z) {
+			console.log('getTileType(' + x + ', ' + z + ')');
+			var texture = '';
+			var cs = model.get('chunkSize');
+			var cx = Math.floor(x / cs);
+			var cz = Math.floor(z / cs);
+			texture = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0][1]; // FIXME verify this
+			console.log('getTileTexture(): ' + texture);
+
+			return texture;
 		}});
 
 		model.set({'unloadWorld': function() {
