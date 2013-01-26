@@ -22,15 +22,16 @@ Crafty.scene("main", function() {
 			
 		sc['bird'] = new Bird();
 //		sc['grass'] = new Tile('grass01');
-
-		for (var i = 0; i < 8; i++) {
-			for (var j = 0; j < 8; j++) {
+		//Crafty.viewport.follow(sc['bird'].get('entity'), 0, 0);
+		
+		for (var i = 0; i < 26; i++) {
+			for (var j = 0; j < 16; j++) {
 				//place grass on all tiles
 				//grassType = Crafty.math.randomInt(1, 4);
 				//console.log(gameContainer.conf.get('renderType'));
 				//Crafty.e("2D, Canvas, grass_01")
 				//.attr({ x: i * 63, y: j * 63, z: 1 });
-				sc['tile'+ i +'x'+ j] = new Tile('grass01', i*64, j*64);
+				sc['tile'+ i +'x'+ j] = new Tile('grass1', i*64, j*64);
 			}
 		}
 		

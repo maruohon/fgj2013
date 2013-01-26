@@ -11,14 +11,14 @@ Worm = BaseEntity.extend({
     	var entity = Crafty.e("2D, "+gameContainer.conf.get('renderType')+", Multiway, Keyboard, worm, SpriteAnimation, Mouse, Collision, MouseHover");
 
     	entity
-		.attr({x: model.get('tilex')*64, y: model.get('tiley')*64, z: 301})
+		.attr({x: model.get('tilex')*64, y: model.get('tiley')*64, z: 301, w: 64, h: 64})
 		.bind('EnterFrame', function(e){
 		var tmp = model.get('timer') - 1;
 		if(tmp <= 0) {
-			model.set('tilex', model.get('tilex')+Math.round(Math.random())*2-1);
-			model.set('tiley', model.get('tiley')+Math.round(Math.random())*2-1);
-			entity.x = model.get('tilex')*64;
-			entity.y = model.get('tiley')*64;
+			//model.set('tilex', model.get('tilex')+Math.round(Math.random())*2-1);
+			//model.set('tiley', model.get('tiley')+Math.round(Math.random())*2-1);
+			//entity.x = model.get('tilex')*64+16;
+			//entity.y = model.get('tiley')*64+16;
 			model.set('timer', Math.floor(Math.random() * 100));
 		}
 		else {
