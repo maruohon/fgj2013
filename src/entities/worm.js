@@ -1,19 +1,24 @@
 Worm = BaseEntity.extend({
 	defaults: {
         'speed' : 20,
-        'timer' : Math.floor(Math.random() * 100)
+        'timer' : Math.floor(Math.random() * 100),
+				// Assume that tiles are 64 pixels x 64 pixels
+				'tilex' : Math.round(Math.random() * 10),
+				'tiley' : Math.round(Math.random() * 10)
     },
     initialize: function(){
     	var model = this;
     	var entity = Crafty.e("2D, "+gameContainer.conf.get('renderType')+", Multiway, Keyboard, worm, SpriteAnimation, Mouse, Collision, MouseHover");
 
     	entity
-		.attr({x: ((Crafty.viewport.width/2) - (entity.w/2)), y: (Crafty.viewport.height/2), z: 301})
+		.attr({x: model.get('tilex')*64, y: model.get('tiley')*64, z: 301})
 		.bind('EnterFrame', function(e){
 		var tmp = model.get('timer') - 1;
 		if(tmp <= 0) {
-			entity.x = entity.x + (Math.round(Math.random() * 2) - 1) * 10;
-			entity.y = entity.y + (Math.round(Math.random() * 2) - 1) * 10;
+			model.set('tilex', model.get('tilex')+Math.round(Math.random())*2-1);
+			model.set('tiley', model.get('tiley')+Math.round(Math.random())*2-1);
+			entity.x = model.get('tilex')*64;
+			entity.y = model.get('tiley')*64;
 			model.set('timer', Math.floor(Math.random() * 100));
 		}
 		else {
