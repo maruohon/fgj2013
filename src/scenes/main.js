@@ -1,3 +1,8 @@
+$("document").ready( function () {
+	
+
+});
+
 Crafty.scene("main", function() {
 
 	var elements = [
@@ -29,7 +34,10 @@ Crafty.scene("main", function() {
 			}
 		}
 		
-		
+		$("#cr-stage").click(function(e) {
+			console.log("Click registered");
+			sc['bird'].attributes.mouseHandler(e);
+		});
 		console.log('Moi');
 //		infc['info'] = new Info();
 	});

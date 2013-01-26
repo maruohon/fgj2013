@@ -51,5 +51,16 @@ Bird = BaseEntity.extend({
             entity.origin(entity.w/2, entity.h/2);
 
     	model.set({'entity' : entity });
+			model.set({'moveTo' : function (x,y) {
+				console.log(x+" "+y);
+				model.set({'targetx' : x-model.get('x')});
+				model.set({'targety' : y-model.get('y')});
+				model.attributes.entity.x = x;
+				model.attributes.entity.y = y;
+			}});
+			model.set({'mouseHandler' : function (e) {
+			
+				model.attributes.moveTo(e.clientX-entity.w/2,e.clientY-entity.h/2);
+			}});
     }
 });
