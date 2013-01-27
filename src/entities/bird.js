@@ -277,8 +277,13 @@ Bird = BaseEntity.extend({
 
 		}});
 		model.set({'mouseHandler' : function (e) {
-
-			model.attributes.moveTo(e.offsetX/*-entity.w/2*/,e.offsetY/*-entity.h/2*/);
+			var event = e;
+			if(typeof event.offsetX === "undefined" || typeof event.offsetY === "undefined") {
+				   var targetOffset = $(event.target).offset();
+				   event.offsetX = event.pageX - targetOffset.left;
+				   event.offsetY = event.pageY - targetOffset.top;
+				}
+			model.attributes.moveTo(event.offsetX/*-entity.w/2*/,event.offsetY/*-entity.h/2*/);
 		}});
 	}
 });
