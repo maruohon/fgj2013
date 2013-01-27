@@ -16,8 +16,10 @@ Crafty.scene("main", function() {
 	//when everything is loaded, run the main scene
 	require(elements, function() {	   
 		/* Create a set of worms */
-		for(var i = 0; i < 10; i++) {
+		for(var i = 0; i < 50; i++) {
 			wormList[i+''] = new Worm();
+			wormList[i+''].set('tilex',Math.round(Math.random() * 31));
+			wormList[i+''].set('tiley',Math.round(Math.random() * 31));
 			
 		}
 			
@@ -25,8 +27,8 @@ Crafty.scene("main", function() {
 //		sc['grass'] = new Tile('grass01');
 		//Crafty.viewport.follow(sc['bird'].get('entity'), 0, 0);
 		
-		for (var i = 0; i < 26; i++) {
-			for (var j = 0; j < 16; j++) {
+		for (var i = 0; i < 32; i++) {
+			for (var j = 0; j < 32; j++) {
 				//place grass on all tiles
 				//grassType = Crafty.math.randomInt(1, 4);
 				//console.log(gameContainer.conf.get('renderType'));

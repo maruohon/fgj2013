@@ -1,13 +1,13 @@
 Bird = BaseEntity.extend({
 	defaults: {
 		'speed' : 2,
-		'acc' : 0.01,
+		'acc' : 0.5,
 		'frame' : 0,
 		'animFrame' : 0,
 		'width': 0,   // width
 		'height': 0,  // height
-		'x': 100,       // x
-		'y': 100,       // y
+		'x': 768,       // x
+		'y': 512,       // y
 		'r': 0,       // rotation (not used yet)
 		'distcalcticks': 30,
 		'newpath' : false,
@@ -31,7 +31,7 @@ Bird = BaseEntity.extend({
 		.bind('EnterFrame', function(e){
 			// Random bird tweets, bird_1, bird_2, bird_3
 			if(model.get('tweetCount') <= 0) {
-				console.log(model.get('tweetCount'));
+			
 				var soundnum = Math.round(Math.random()*2)+1;
 				Crafty.audio.play("bird_"+soundnum,1,0.4);
 				model.set('tweetCount',Math.random()*300+200);
@@ -248,7 +248,7 @@ Bird = BaseEntity.extend({
 				}
 			});
 			if(!ifworm) {
-				Crafty.audio.play("peck_dirt",1,0.5);
+				Crafty.audio.play("peck_dirt",1,0.8);
 			}
 		})
 		.setName('Bird');
@@ -285,5 +285,9 @@ Bird = BaseEntity.extend({
 				}
 			model.attributes.moveTo(event.offsetX/*-entity.w/2*/,event.offsetY/*-entity.h/2*/);
 		}});
+		Crafty.viewport.scroll('_x', -model.get('entity').x+Crafty.viewport.width/2);
+		Crafty.viewport.scroll('_y', -model.get('entity').y+Crafty.viewport.height/2);
+		model.get('scroll')[0] = -model.get('entity').x+Crafty.viewport.width/2;
+		model.get('scroll')[1] = -model.get('entity').y+Crafty.viewport.height/2;
 	}
 });
