@@ -12,7 +12,7 @@ World = BaseEntity.extend({
 		'terrainFeatures'	: { 'water' : true, 'stone' : true, 'trees' : true },	// Additional terrain features that will be generated (water, stone, grass, trees)
 		'chunkSize'			: 8,
 		'treePercentage'	: 0.04,	// On average, xx % of (grass) tiles can be covered with trees
-		'stoneOnGrassPcnt'	: 0.05,	// Stone on grass percentage
+		'stoneOnGrassPcnt'	: 0.03,	// Stone on grass percentage
 		'grassOnStonePcnt'	: 0.2,	// Grass on stone percentage
 		'waterPercentage'	: 0.05,
 		'worldSeed'			: '',
@@ -160,7 +160,7 @@ World = BaseEntity.extend({
 							               model.get('terrainData')[chunk_x][chunk_z][i - 1][j][1][0] === tileIDs.tileIDair &&
 							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][0][0] === tileIDs.tileIDgrass &&
 							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][1][0] === tileIDs.tileIDair) ) {
-								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDstone, 'stone1'];
+								model.get('terrainData')[chunk_x][chunk_z][i][j][1] = [tileIDs.tileIDstone, 'stone1'];
 							}
 						}
 					}

@@ -52,7 +52,7 @@ Sprites = Backbone.Model.extend({
 				'elements': {
 					'grass1' : [0, 0],
 					'water1' : [1, 0],
-					'stone1' : [1, 0], // FIXME temporary
+					'stone1' : [2, 3],
 					'waterborder_tl' : [2, 0],
 					'waterborder_tc' : [3, 0],
 					'waterborder_tr' : [4, 0],
