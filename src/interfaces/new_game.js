@@ -6,17 +6,17 @@ StartGame = BaseEntity.extend({
     initialize: function(){
     	var model = this;
     	
-		var speed = 3;
+		var speed = 5;
 		var entity = Crafty.e("2D, "+gameContainer.conf.get('renderType')+", Multiway, Keyboard, start_game, SpriteAnimation, Mouse, Collision, MouseHover");
 		entity
 		.attr({x: ((Crafty.viewport.width) / 2) - 150/2, y: ((Crafty.viewport.height))*2, z: 301})
 		.bind('EnterFrame', function(e){
 			// Animate this
 			this.y-=speed;
-			if(Math.abs(this.y - 520) < 60 && speed >= 0.1) {
-				speed-=0.1;
+			if(Math.abs(this.y - 520) < 60 && speed >= 0.2) {
+				speed-=0.2;
 			} else {
-				if(speed < 0.1)
+				if(speed < 0.2)
 					speed = 0;
 			}
 			model.set('frame', model.get('frame')+1);

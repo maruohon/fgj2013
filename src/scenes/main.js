@@ -10,7 +10,9 @@ Crafty.scene("main", function() {
         "src/entities/worm.js",
         "src/entities/tile.js",
 		"src/entities/bird.js",
-        "src/interfaces/info.js"
+        "src/entities/popup_worm.js",
+        "src/interfaces/heart_icon.js",
+		"src/interfaces/score_text.js"
 	];
 	
 	//when everything is loaded, run the main scene
@@ -22,8 +24,10 @@ Crafty.scene("main", function() {
 			wormList[i+''].set('tiley',Math.round(Math.random() * 31));
 			
 		}
-			
-		sc['bird'] = new Bird();
+		sc['heart'] = new HeartIcon();	
+		sc['score_text'] =  new ScoreText();
+		sc['bird'] = new Bird();		
+
 //		sc['grass'] = new Tile('grass01');
 		//Crafty.viewport.follow(sc['bird'].get('entity'), 0, 0);
 		
@@ -42,6 +46,7 @@ Crafty.scene("main", function() {
 			console.log("Click registered");
 			sc['bird'].attributes.mouseHandler(e);
 		});
+		
 		console.log('Moi');
 //		infc['info'] = new Info();
 	});

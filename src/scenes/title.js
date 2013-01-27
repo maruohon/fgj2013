@@ -6,7 +6,12 @@ Crafty.scene("title", function() {
         "src/entities/tile.js",
         "src/interfaces/title_text.js",
         "src/interfaces/title_bird.js",
-        "src/interfaces/new_game.js"
+        "src/interfaces/new_game.js",
+        "src/entities/popup_worm.js",
+        //"src/interfaces/heart_icon.js",
+        "src/interfaces/score_text.js",
+        //"src/interfaces/back_to_menu.js",
+        //"src/interfaces/restart_game.js",
 	];
 	
 	//when everything is loaded, run the main scene
@@ -15,6 +20,9 @@ Crafty.scene("title", function() {
 		var title_bird = new TitleBird();
 		var start_game = new StartGame();
 
+		//var popup = new PopupWorm(100,100,200,200);
+		//score_text.get('setScore')('21454');
+		
 		start_game.getEntity().bind('Click', function() {
 			Crafty.scene('main');
 		});

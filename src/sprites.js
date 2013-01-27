@@ -37,6 +37,14 @@ Sprites = Backbone.Model.extend({
 					'worm' : [0, 0]
 				}
 			},
+			'worm_small' : {
+				'file' : 'web/images/worm_anim_small.png',
+				'tile' : 32,
+				'tileh' : 32,
+				'elements': {
+					'worm_small' : [0, 0]
+				}
+			},
 			'grass' : {
 				'file' : 'web/images/grass_01.png',
 				'tile' : 64,
@@ -87,6 +95,22 @@ Sprites = Backbone.Model.extend({
 				'elements': {
 					'start_game' : [0, 0],
 				}
+			},
+			'heart_icon_open' : {
+				'file' : 'web/images/heart.png',
+				'tile' : 100,
+				'tileh' : 86,
+				'elements': {
+					'heart_open' : [0, 0],
+				}				
+			},
+			'heart_icon_fill' : {
+				'file' : 'web/images/heart_fill.png',
+				'tile' : 90,
+				'tileh' : 76,
+				'elements': {
+					'heart_fill' : [0, 0],
+				}				
 			}
 		}
 	},

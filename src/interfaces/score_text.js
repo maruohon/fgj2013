@@ -1,20 +1,30 @@
 ScoreText = BaseEntity.extend({
 	defaults: {
-        'SCORE' : "SCORE ",
+        'text' : "SCORE ",
+        'score' : 0
     },
     initialize: function(){
     	var model = this;
-    	var entity = Crafty.e("2D, DOM, Text");
+    	var entity = Crafty.e("2D, Canvas, Text");
 
     	entity
-            .attr({x: 50, y: 50, z: 1000, w: 400})
+            .attr({x: 10, y: 10, z: 1000})
             .text(model.get('text'))
             .textColor('#000')
-            .textFont({'size' : '24px', 'family': 'Arial'})
+            .textFont({'size' : '32px', 'family': 'Verdana'})
             .bind('Click', function(){
-                                
             })
-
+            .bind('EnterFrame', function(e){
+            	this.text(model.get('text') + " " + model.get('score'));
+            	//console.log(model.get('text'));
+            	entity.x = -sc['bird'].get('scroll')[0] + 30;
+            	entity.y = -sc['bird'].get('scroll')[1] + 50;
+            	
+            });
+        model.set({'setScore' : function (score) {
+        	//model.set('text',"SCORE " + score);
+        	model.set('score', score);
+        }});
     	model.set({'entity' : entity });
     }
 });

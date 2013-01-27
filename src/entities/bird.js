@@ -21,7 +21,7 @@ Bird = BaseEntity.extend({
 	},
 	initialize: function(){
 		var model = this;
-
+		var popup = null;
 		var entity = Crafty.e("2D, "+gameContainer.conf.get('renderType')+", Keyboard, bird, Mouse, SpriteAnimation");
 		model.set('width', entity.w);
 		model.set('height', entity.h);
@@ -139,6 +139,9 @@ Bird = BaseEntity.extend({
 			}
 
 			if(model.get('followpath')) {
+				// hp down
+				sc['heart'].set('hp', sc['heart'].get('hp')-0.05);
+				
 				if(model.get('frame') < 8) {
 					model.set('frame', model.get('frame')+1);
 				} else {
@@ -234,6 +237,17 @@ Bird = BaseEntity.extend({
 			var ifworm = false;
 			$.each(wormList, function(i,worm) {
 				if(worm.get('tilex') === tilex && worm.get('tiley') === tiley) {
+					
+					// give health
+					var hp = sc['heart'].get('hp');
+					hp += 5;
+					if(hp > 100)
+						hp = 100;
+					sc['heart'].set('hp',hp);
+					
+					//sc['score_text'].get('setScore')(sc['score_te'])
+					sc['score_text'].set('score', sc['score_text'].get('score') + 100);
+					
 					console.log("Got a worm!");
 					model.set('animFrame', 0);
 					model.get('entity').sprite(1, 4, 1, 1);
@@ -243,11 +257,14 @@ Bird = BaseEntity.extend({
 					model.get('entity').y = model.get('targety');
 					worm.get('entity').destroy();
 					wormList.splice(i,1);
+					popup = new PopupWorm(model.get('entity').x, model.get('entity').y, sc['heart'].getEntity().x,sc['heart'].getEntity().y);
 					ifworm = true;
 					return false;
 				}
 			});
 			if(!ifworm) {
+				model.set('animFrame', 0);
+				model.get('entity').sprite(1, 4, 1, 1);
 				Crafty.audio.play("peck_dirt",1,0.8);
 			}
 		})

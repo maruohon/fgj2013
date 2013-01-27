@@ -68,6 +68,7 @@ window.onload = function() {
 		var scenes = [
 			"src/scenes/main.js?v="+version+"",
 			"src/scenes/title.js?v="+version+"",
+			"src/scenes/gameover.js?v="+version+"",
 		];
 		
 		require(scenes, function(){});
