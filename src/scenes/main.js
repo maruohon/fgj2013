@@ -25,8 +25,27 @@ Crafty.scene("main", function() {
 			
 		}
 		sc['heart'] = new HeartIcon();	
-		sc['score_text'] =  new ScoreText();
-		sc['bird'] = new Bird();		
+		
+		sc['bird'] = new Bird();	
+		
+		sc['worm_text'] = Crafty.e("2D, DOM, Text");
+
+		sc['worm_text']
+            .attr({x: 70, y: 300, z: 9000, w:600})
+            .text('Worms: 0 / 50')
+            .textColor('#000')
+            .textFont({'size' : '32px', 'family': 'Verdana'})
+            .bind('Click', function(){
+            })
+            .bind('EnterFrame', function(e){
+            	//console.log(wormList);
+            	sc['worm_text'].x = -sc['bird'].get('scroll')[0] - 130;
+            	sc['worm_text'].y = -sc['bird'].get('scroll')[1] + 90;
+            	var worms = wormList.length;
+            	sc['worm_text'].text("Worms: "+(50-worms)+" / 50");
+            });
+		
+		
 
 //		sc['grass'] = new Tile('grass01');
 		//Crafty.viewport.follow(sc['bird'].get('entity'), 0, 0);
@@ -46,7 +65,7 @@ Crafty.scene("main", function() {
 			console.log("Click registered");
 			sc['bird'].attributes.mouseHandler(e);
 		});
-		
+		sc['score_text'] =  new ScoreText();
 		console.log('Moi');
 //		infc['info'] = new Info();
 	});

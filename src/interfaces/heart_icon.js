@@ -30,7 +30,7 @@ HeartIcon = BaseEntity.extend({
 				frameentity.w--;
 
 			}
-			console.log(sc['bird'].get('soundPlaying'));
+			//console.log(sc['bird'].get('soundPlaying'));
 			if(sc['bird'].get('soundPlaying') === undefined )
 			{
 				model.set('frame', 0);
@@ -86,7 +86,8 @@ HeartIcon = BaseEntity.extend({
 			//model.set('hp', model.get('hp') + Math.random()*2);
 			
 			if(model.get('hp') <= 0) {
-				Crafty.scene('gameover');
+				//Crafty.scene('gameover');
+				var test = new GameOverDialog();
 				//model.set('hp', 100);
 			}
 			var height = (76/100) * model.get('hp');

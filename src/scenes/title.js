@@ -10,6 +10,7 @@ Crafty.scene("title", function() {
         "src/entities/popup_worm.js",
         //"src/interfaces/heart_icon.js",
         "src/interfaces/score_text.js",
+        "src/interfaces/gameover_dialog.js",
         //"src/interfaces/back_to_menu.js",
         //"src/interfaces/restart_game.js",
 	];

@@ -5,12 +5,12 @@ ScoreText = BaseEntity.extend({
     },
     initialize: function(){
     	var model = this;
-    	var entity = Crafty.e("2D, Canvas, Text");
+    	var entity = Crafty.e("2D, DOM, Text");
 
     	entity
-            .attr({x: 10, y: 10, z: 1000})
+            .attr({x: 10, y: 10, z: 9000, w: 200})
             .text(model.get('text'))
-            .textColor('#000')
+            .textColor('#FFF')
             .textFont({'size' : '32px', 'family': 'Verdana'})
             .bind('Click', function(){
             })

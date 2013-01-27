@@ -96,6 +96,30 @@ Sprites = Backbone.Model.extend({
 					'start_game' : [0, 0],
 				}
 			},
+			'restart_game' : {
+				'file' : 'web/images/button_restart.png',
+				'tile' : 382,
+				'tileh' : 129,
+				'elements': {
+					'restart_game' : [0, 0],
+				}
+			},
+			'to_mainmenu' : {
+				'file' : 'web/images/button_back_to_menu.png',
+				'tile' : 606,
+				'tileh' : 129,
+				'elements': {
+					'to_mainmenu' : [0, 0],
+				}
+			},
+			'button_bg' : {
+				'file' : 'web/images/button_bg.png',
+				'tile' : 692,
+				'tileh' : 664,
+				'elements': {
+					'button_bg' : [0, 0],
+				}
+			},
 			'heart_icon_open' : {
 				'file' : 'web/images/heart.png',
 				'tile' : 100,
