@@ -55,6 +55,38 @@ Sprites = Backbone.Model.extend({
 					'tree1' : [0, 1],
 					'tree2' : [1, 1]
 				}
+			},
+			'title' : {
+				'file' : 'web/images/title.png',
+				'tile' : 700,
+				'tileh' : 266,
+				'elements': {
+					'title' : [0, 0],
+				}
+			},
+			'title_text' : {
+				'file' : 'web/images/title_text.png',
+				'tile' : 700,
+				'tileh' : 106,
+				'elements': {
+					'title_text' : [0, 0],
+				}
+			},
+			'title_bird' : {
+				'file' : 'web/images/title_bird_anim.png',
+				'tile' : 239,
+				'tileh' : 257,
+				'elements': {
+					'title_bird' : [0, 0],
+				}
+			},
+			'start_game' : {
+				'file' : 'web/images/button_start.png',
+				'tile' : 150,
+				'tileh' : 66,
+				'elements': {
+					'start_game' : [0, 0],
+				}
 			}
 		}
 	},

@@ -9,7 +9,7 @@ Crafty.scene("main", function() {
         "src/entities/ufo.js",
         "src/entities/worm.js",
         "src/entities/tile.js",
-				"src/entities/bird.js",
+		"src/entities/bird.js",
         "src/interfaces/info.js"
 	];
 	
@@ -18,6 +18,7 @@ Crafty.scene("main", function() {
 		/* Create a set of worms */
 		for(var i = 0; i < 10; i++) {
 			wormList[i+''] = new Worm();
+			
 		}
 			
 		sc['bird'] = new Bird();

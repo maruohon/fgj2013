@@ -15,7 +15,10 @@
    id="svg5311"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="bird-concept-front.svg">
+   sodipodi:docname="bird-concept-back.svg"
+   inkscape:export-filename="/home/julankin/Work/Other/github/fgj2013/web/images/bird-concept-back.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs5313">
     <linearGradient
@@ -97,11 +100,11 @@
      showgrid="true"
      inkscape:document-units="px"
      inkscape:grid-bbox="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1048"
-     inkscape:window-x="0"
+     inkscape:window-width="774"
+     inkscape:window-height="661"
+     inkscape:window-x="631"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata5316">
     <rdf:RDF>

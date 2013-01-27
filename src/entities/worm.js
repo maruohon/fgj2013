@@ -8,7 +8,7 @@ Worm = BaseEntity.extend({
     },
     initialize: function(){
     	var model = this;
-    	var entity = Crafty.e("2D, "+gameContainer.conf.get('renderType')+", Multiway, Keyboard, worm, SpriteAnimation, Mouse, Collision, MouseHover");
+    	var entity = Crafty.e(" "+gameContainer.conf.get('renderType')+", Multiway, Keyboard, worm, SpriteAnimation, Mouse, Collision, MouseHover");
 
     	entity
 		.attr({x: model.get('tilex')*64, y: model.get('tiley')*64, z: 301, w: 64, h: 64})

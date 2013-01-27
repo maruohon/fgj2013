@@ -86,27 +86,22 @@ Bird = BaseEntity.extend({
 				var angle = Math.atan2(model.get('targety')-wy,model.get('targetx')-wx);
 
 				if(angle >= -Math.PI/4 && angle < Math.PI/4) {
-					//entity.__coord[0] = 0;
 					entity.__coord[1] = 64;
 				}
 				if(angle >= Math.PI/4 && angle < Math.PI*(3/4)) {
-					//entity.__coord[0] = 0;
 					entity.__coord[1] = 128;
 				}
 
 				if(angle >= Math.PI*(3/4) && angle < Math.PI+0.001) {
-					//entity.__coord[0] = 0;
 					entity.__coord[1] = 0;
 					model.set('goingRight',false);
 				}
 				if(angle >= -Math.PI && angle < -Math.PI*(3/4)) {
-					//entity.__coord[0] = 0;
 					entity.__coord[1] = 0;
 					model.set('goingRight',false);
 				}
 
 				if(angle >= -Math.PI*(3/4) && angle < -Math.PI/4) {
-					//entity.__coord[0] = 0;
 					entity.__coord[1] = 192;
 				}
 
@@ -142,7 +137,7 @@ Bird = BaseEntity.extend({
 						model.set('animFrame', 0);
 					}
 				}
-				
+			
 				
 				
 				var ovec = model.get('origvec2').clone();
@@ -188,7 +183,7 @@ Bird = BaseEntity.extend({
 				}
 
 			} else {
-			
+				//model.get('entity').sprite(1, 1, 1, 1);
 				// idle pose
 				
 				if(model.get('frame') < (80+Math.random()*100)) {
@@ -228,6 +223,12 @@ Bird = BaseEntity.extend({
 			$.each(wormList, function(i,worm) {
 				if(worm.get('tilex') === tilex && worm.get('tiley') === tiley) {
 					console.log("Got a worm!");
+					model.set('animFrame', 0);
+					model.get('entity').sprite(1, 4, 1, 1);
+					//model.get('entity').animate('bird',20);
+					
+					model.get('entity').x = model.get('targetx');
+					model.get('entity').y = model.get('targety');
 					worm.get('entity').destroy();
 					wormList.splice(i,1);
 					return false;
@@ -253,9 +254,12 @@ Bird = BaseEntity.extend({
 			var tiley = Math.floor(y/64)*64;
 			
 			console.log(tilex+" x "+tiley);
-			model.set({'targetx' : tilex});
-			model.set({'targety' : tiley});
-			model.set({'newpath' : true});
+			if(tilex != model.get('targetx') || tiley != model.get('targety')) {
+				model.set({'targetx' : tilex});
+				model.set({'targety' : tiley});
+				model.set({'newpath' : true});
+			}
+
 		}});
 		model.set({'mouseHandler' : function (e) {
 

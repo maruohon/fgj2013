@@ -11,7 +11,7 @@ window.onload = function() {
 	};
     
 	//start Crafty
-	Crafty.init(800, 400);
+	Crafty.init(1280, 720);
 	Crafty.canvas.init();
 	
 	require([
@@ -67,6 +67,7 @@ window.onload = function() {
 		// declare all scenes
 		var scenes = [
 			"src/scenes/main.js?v="+version+"",
+			"src/scenes/title.js?v="+version+"",
 		];
 		
 		require(scenes, function(){});
