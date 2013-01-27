@@ -16,7 +16,8 @@ Bird = BaseEntity.extend({
 		'origpathdist' : 0,
 		'scroll': [0,0],
 		'goingRight': true,
-		'soundPlaying': ""
+		'soundPlaying': "",
+		'tweetCount': 400
 	},
 	initialize: function(){
 		var model = this;
@@ -28,7 +29,17 @@ Bird = BaseEntity.extend({
 		.attr({x: model.get('x'), y: model.get('y'), z: 500})
 		//.collision(new Crafty.polygon([21,63],[40,55],[59,52],[71,52],[74,39],[83,24],[102,13],[117,13],[119,13],[136,24],[147,37],[151,51],[174,54],[190,58],[195,62],[200,68],[196,78],[180,85],[148,91],[102,92],[70,91],[46,86],[24,80],[17,68],[18,64]))
 		.bind('EnterFrame', function(e){
-
+			// Random bird tweets, bird_1, bird_2, bird_3
+			if(model.get('tweetCount') <= 0) {
+				console.log(model.get('tweetCount'));
+				var soundnum = Math.round(Math.random()*2)+1;
+				Crafty.audio.play("bird_"+soundnum,1,0.4);
+				model.set('tweetCount',Math.random()*300+200);
+			} else {
+				model.set('tweetCount',model.get('tweetCount')-1);
+			}
+			
+			
 			if (model.get('distcalcticks') <= 0) {
 
 				var dist = [];
@@ -226,7 +237,7 @@ Bird = BaseEntity.extend({
 					model.set('animFrame', 0);
 					model.get('entity').sprite(1, 4, 1, 1);
 					//model.get('entity').animate('bird',20);
-					
+					Crafty.audio.play("peck",1,0.5);
 					model.get('entity').x = model.get('targetx');
 					model.get('entity').y = model.get('targety');
 					worm.get('entity').destroy();
