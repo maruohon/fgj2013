@@ -11,17 +11,41 @@ Crafty.scene("main", function() {
         "src/entities/tile.js",
 		"src/entities/bird.js",
 		"src/components/world.js",
-        "src/interfaces/info.js"
+        "src/entities/popup_worm.js",
+        "src/interfaces/heart_icon.js",
+		"src/interfaces/score_text.js"
 	];
 	
 	//when everything is loaded, run the main scene
 	require(elements, function() {	   
 		/* Create a set of worms */
-		for(var i = 0; i < 10; i++) {
+		for(var i = 0; i < 50; i++) {
 			wormList[i+''] = new Worm();
-		}
+			wormList[i+''].set('tilex',Math.round(Math.random() * 31));
+			wormList[i+''].set('tiley',Math.round(Math.random() * 31));
 			
-		sc['bird'] = new Bird();
+		}
+		sc['heart'] = new HeartIcon();	
+		
+		sc['bird'] = new Bird();	
+		
+		sc['worm_text'] = Crafty.e("2D, DOM, Text");
+
+		sc['worm_text']
+            .attr({x: 70, y: 300, z: 9000, w:600})
+            .text('Worms: 0 / 50')
+            .textColor('#000')
+            .textFont({'size' : '32px', 'family': 'Verdana'})
+            .bind('Click', function(){
+            })
+            .bind('EnterFrame', function(e){
+            	//console.log(wormList);
+            	sc['worm_text'].x = -sc['bird'].get('scroll')[0] - 125;
+            	sc['worm_text'].y = -sc['bird'].get('scroll')[1] + 90;
+            	var worms = wormList.length;
+            	sc['worm_text'].text("Worms: "+(50-worms)+" / 50");
+            });
+
 //		sc['grass'] = new Tile('grass01');
 		//Crafty.viewport.follow(sc['bird'].get('entity'), 0, 0);
 
@@ -29,10 +53,8 @@ Crafty.scene("main", function() {
 		sc['world'].attributes.setSeed('foo12');
 		sc['world'].attributes.loadAroundXZwithR(0, 0, 30)
 
-		console.log(sc['world'].defaults);
-
-		for (var i = 0; i < 26; i++) {
-			for (var j = 0; j < 16; j++) {
+		for (var i = 0; i < 32; i++) {
+			for (var j = 0; j < 32; j++) {
 				//place grass on all tiles
 				//grassType = Crafty.math.randomInt(1, 4);
 				//console.log(gameContainer.conf.get('renderType'));
@@ -48,45 +70,12 @@ Crafty.scene("main", function() {
 			}
 		}
 
-//		var tmp = "";
-/*
-		tmp = sc['world'].attributes.chunkIsLoaded(0, 0);
-		console.log('chunkIsLoaded 0, 0: ' + tmp);
-
-		if(tmp === false) {
-			tmp = sc['world'].attributes.loadChunk(0, 0);
-//			console.log('loadChunk(0, 0) ... ' + tmp);
-		}
-*/
-//		tmp = sc['world'].attributes.unloadChunk(0, 0);
-//		console.log('unloadChunk(0, 0) ... ' + tmp);
-//		tmp = sc['world'].attributes.loadAroundXZwithR(7, 7, 2);
-//		console.log('loadAroundXZwithR(): ' + tmp);
-
-//		console.log(sc['world'].defaults);
-
-/*
-		var foo = [];
-		foo[-6] = -6;
-		foo[-5] = -5;
-		foo[-4] = -4;
-		for(var i = 0; i < foo.length; i++) {
-			console.log('for: ' + i + ' : ' + foo[i]);
-		}
-		console.log('foo.length: ' + foo.length);
-		console.log('foo: ' + foo);
-
-		for(var k in foo) {
-			console.log('key: ' + k + ' val: ' + foo[k]);
-		}
-		console.log('foo[-5]: ' + foo[-5]);
-*/
 		$("#cr-stage").click(function(e) {
 			console.log("Click registered");
 			sc['bird'].attributes.mouseHandler(e);
 		});
+		sc['score_text'] =  new ScoreText();
 		console.log('Moi');
-//		infc['info'] = new Info();
 	});
 
 });

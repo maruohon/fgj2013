@@ -37,6 +37,14 @@ Sprites = Backbone.Model.extend({
 					'worm' : [0, 0]
 				}
 			},
+			'worm_small' : {
+				'file' : 'web/images/worm_anim_small.png',
+				'tile' : 32,
+				'tileh' : 32,
+				'elements': {
+					'worm_small' : [0, 0]
+				}
+			},
 			'grass' : {
 				'file' : 'web/images/grass_01.png',
 				'tile' : 64,
@@ -68,6 +76,78 @@ Sprites = Backbone.Model.extend({
 					'tree1' : [0, 1],
 					'tree2' : [1, 1]
 				}
+			},
+			'title' : {
+				'file' : 'web/images/title.png',
+				'tile' : 700,
+				'tileh' : 266,
+				'elements': {
+					'title' : [0, 0],
+				}
+			},
+			'title_text' : {
+				'file' : 'web/images/title_text.png',
+				'tile' : 700,
+				'tileh' : 106,
+				'elements': {
+					'title_text' : [0, 0],
+				}
+			},
+			'title_bird' : {
+				'file' : 'web/images/title_bird_anim.png',
+				'tile' : 239,
+				'tileh' : 257,
+				'elements': {
+					'title_bird' : [0, 0],
+				}
+			},
+			'start_game' : {
+				'file' : 'web/images/button_start.png',
+				'tile' : 150,
+				'tileh' : 66,
+				'elements': {
+					'start_game' : [0, 0],
+				}
+			},
+			'restart_game' : {
+				'file' : 'web/images/button_restart.png',
+				'tile' : 382,
+				'tileh' : 129,
+				'elements': {
+					'restart_game' : [0, 0],
+				}
+			},
+			'to_mainmenu' : {
+				'file' : 'web/images/button_back_to_menu.png',
+				'tile' : 606,
+				'tileh' : 129,
+				'elements': {
+					'to_mainmenu' : [0, 0],
+				}
+			},
+			'button_bg' : {
+				'file' : 'web/images/button_bg.png',
+				'tile' : 692,
+				'tileh' : 664,
+				'elements': {
+					'button_bg' : [0, 0],
+				}
+			},
+			'heart_icon_open' : {
+				'file' : 'web/images/heart.png',
+				'tile' : 100,
+				'tileh' : 86,
+				'elements': {
+					'heart_open' : [0, 0],
+				}				
+			},
+			'heart_icon_fill' : {
+				'file' : 'web/images/heart_fill.png',
+				'tile' : 90,
+				'tileh' : 76,
+				'elements': {
+					'heart_fill' : [0, 0],
+				}				
 			}
 		}
 	},

@@ -1,13 +1,13 @@
 Bird = BaseEntity.extend({
 	defaults: {
 		'speed' : 2,
-		'acc' : 0.1,
+		'acc' : 0.5,
 		'frame' : 0,
 		'animFrame' : 0,
 		'width': 0,   // width
 		'height': 0,  // height
-		'x': 100,       // x
-		'y': 100,       // y
+		'x': 12*64,//768,       // x
+		'y': 12*64,//512,       // y
 		'r': 0,       // rotation (not used yet)
 		'distcalcticks': 30,
 		'newpath' : false,
@@ -16,11 +16,12 @@ Bird = BaseEntity.extend({
 		'origpathdist' : 0,
 		'scroll': [0,0],
 		'goingRight': true,
-		'soundPlaying': ""
+		'soundPlaying': "",
+		'tweetCount': 400
 	},
 	initialize: function(){
 		var model = this;
-
+		var popup = null;
 		var entity = Crafty.e("2D, "+gameContainer.conf.get('renderType')+", Keyboard, bird, Mouse, SpriteAnimation");
 		model.set('width', entity.w);
 		model.set('height', entity.h);
@@ -28,7 +29,17 @@ Bird = BaseEntity.extend({
 		.attr({x: model.get('x'), y: model.get('y'), z: 500})
 		//.collision(new Crafty.polygon([21,63],[40,55],[59,52],[71,52],[74,39],[83,24],[102,13],[117,13],[119,13],[136,24],[147,37],[151,51],[174,54],[190,58],[195,62],[200,68],[196,78],[180,85],[148,91],[102,92],[70,91],[46,86],[24,80],[17,68],[18,64]))
 		.bind('EnterFrame', function(e){
-
+			// Random bird tweets, bird_1, bird_2, bird_3
+			if(model.get('tweetCount') <= 0) {
+			
+				var soundnum = Math.round(Math.random()*2)+1;
+				Crafty.audio.play("bird_"+soundnum,1,0.4);
+				model.set('tweetCount',Math.random()*300+200);
+			} else {
+				model.set('tweetCount',model.get('tweetCount')-1);
+			}
+			
+			
 			if (model.get('distcalcticks') <= 0) {
 
 				var dist = [];
@@ -45,25 +56,25 @@ Bird = BaseEntity.extend({
 				if(sDist <= 8200) {
 					if(model.get('soundPlaying') !== "hb_very_fast") {
 						Crafty.audio.stop(model.get('soundPlaying'));
-						Crafty.audio.play("hb_very_fast",-1,0.2);
+						Crafty.audio.play("hb_very_fast",-1,0.5);
 						model.set('soundPlaying',"hb_very_fast");
 					}
 				} else if(sDist > 8200 && sDist <= 65536) {
 					if(model.get('soundPlaying') !== "hb_normal") {
 						Crafty.audio.stop(model.get('soundPlaying'));
-						Crafty.audio.play("hb_normal",-1,0.1);
+						Crafty.audio.play("hb_normal",-1,0.4);
 						model.set('soundPlaying',"hb_normal");
 					}
 				} else if(sDist > 65536 && sDist <= 147456) {
 					if(model.get('soundPlaying') !== "hb_slow") {
 						Crafty.audio.stop(model.get('soundPlaying'));
-						Crafty.audio.play("hb_slow",-1,0.1);
+						Crafty.audio.play("hb_slow",-1,0.3);
 						model.set('soundPlaying',"hb_slow");
 					}
 				} else if(sDist > 147456 && sDist <= 250000) {
 					if(model.get('soundPlaying') !== "hb_very_slow") {
 						Crafty.audio.stop(model.get('soundPlaying'));
-						Crafty.audio.play("hb_very_slow",-1,0.1);
+						Crafty.audio.play("hb_very_slow",-1,0.3);
 						model.set('soundPlaying',"hb_very_slow");
 					}
 				} else {
@@ -86,27 +97,22 @@ Bird = BaseEntity.extend({
 				var angle = Math.atan2(model.get('targety')-wy,model.get('targetx')-wx);
 
 				if(angle >= -Math.PI/4 && angle < Math.PI/4) {
-					//entity.__coord[0] = 0;
 					entity.__coord[1] = 64;
 				}
 				if(angle >= Math.PI/4 && angle < Math.PI*(3/4)) {
-					//entity.__coord[0] = 0;
 					entity.__coord[1] = 128;
 				}
 
 				if(angle >= Math.PI*(3/4) && angle < Math.PI+0.001) {
-					//entity.__coord[0] = 0;
 					entity.__coord[1] = 0;
 					model.set('goingRight',false);
 				}
 				if(angle >= -Math.PI && angle < -Math.PI*(3/4)) {
-					//entity.__coord[0] = 0;
 					entity.__coord[1] = 0;
 					model.set('goingRight',false);
 				}
 
 				if(angle >= -Math.PI*(3/4) && angle < -Math.PI/4) {
-					//entity.__coord[0] = 0;
 					entity.__coord[1] = 192;
 				}
 
@@ -133,6 +139,9 @@ Bird = BaseEntity.extend({
 			}
 
 			if(model.get('followpath')) {
+				// hp down
+				sc['heart'].set('hp', sc['heart'].get('hp')-0.05);
+				
 				if(model.get('frame') < 8) {
 					model.set('frame', model.get('frame')+1);
 				} else {
@@ -142,7 +151,7 @@ Bird = BaseEntity.extend({
 						model.set('animFrame', 0);
 					}
 				}
-				
+			
 				
 				
 				var ovec = model.get('origvec2').clone();
@@ -188,7 +197,7 @@ Bird = BaseEntity.extend({
 				}
 
 			} else {
-			
+				//model.get('entity').sprite(1, 1, 1, 1);
 				// idle pose
 				
 				if(model.get('frame') < (80+Math.random()*100)) {
@@ -221,19 +230,43 @@ Bird = BaseEntity.extend({
 		.bind('Click', function(e) {
 			
 			// Try to eat
+			
 			// Check tile
 			var tilex = Math.round(model.get('entity').x/64);
 			var tiley = Math.round(model.get('entity').y/64);
-			
+			var ifworm = false;
 			$.each(wormList, function(i,worm) {
 				if(worm.get('tilex') === tilex && worm.get('tiley') === tiley) {
+					
+					// give health
+					var hp = sc['heart'].get('hp');
+					hp += 5;
+					if(hp > 100)
+						hp = 100;
+					sc['heart'].set('hp',hp);
+					
+					//sc['score_text'].get('setScore')(sc['score_te'])
+					sc['score_text'].set('score', sc['score_text'].get('score') + 100);
+					
 					console.log("Got a worm!");
+					model.set('animFrame', 0);
+					model.get('entity').sprite(1, 4, 1, 1);
+					//model.get('entity').animate('bird',20);
+					Crafty.audio.play("peck",1,0.5);
+					model.get('entity').x = model.get('targetx');
+					model.get('entity').y = model.get('targety');
 					worm.get('entity').destroy();
 					wormList.splice(i,1);
+					popup = new PopupWorm(model.get('entity').x, model.get('entity').y, sc['heart'].getEntity().x,sc['heart'].getEntity().y);
+					ifworm = true;
 					return false;
 				}
 			});
-			
+			if(!ifworm) {
+				model.set('animFrame', 0);
+				model.get('entity').sprite(1, 4, 1, 1);
+				Crafty.audio.play("peck_dirt",1,0.8);
+			}
 		})
 		.setName('Bird');
 
@@ -253,13 +286,28 @@ Bird = BaseEntity.extend({
 			var tiley = Math.floor(y/64)*64;
 			
 			console.log(tilex+" x "+tiley);
-			model.set({'targetx' : tilex});
-			model.set({'targety' : tiley});
-			model.set({'newpath' : true});
+			if(tilex != model.get('targetx') || tiley != model.get('targety')) {
+				model.set({'targetx' : tilex});
+				model.set({'targety' : tiley});
+				model.set({'newpath' : true});
+			}
+
 		}});
 		model.set({'mouseHandler' : function (e) {
-
-			model.attributes.moveTo(e.clientX/*-entity.w/2*/,e.clientY/*-entity.h/2*/);
+			var event = e;
+			if(typeof event.offsetX === "undefined" || typeof event.offsetY === "undefined") {
+				   var targetOffset = $(event.target).offset();
+				   event.offsetX = event.pageX - targetOffset.left;
+				   event.offsetY = event.pageY - targetOffset.top;
+				}
+			model.attributes.moveTo(event.offsetX/*-entity.w/2*/,event.offsetY/*-entity.h/2*/);
 		}});
+		
+		Crafty.viewport.scroll('_x', -model.get('entity').x+Crafty.viewport.width/2);
+		Crafty.viewport.scroll('_y', -model.get('entity').y+Crafty.viewport.height/2);
+		model.get('scroll')[0] = -model.get('entity').x+Crafty.viewport.width/2;
+		model.get('scroll')[1] = -model.get('entity').y+Crafty.viewport.height/2;
+		console.log(model.get('scroll'));
+		model.attributes.moveTo(model.getEntity().x-64,model.getEntity().y-64);
 	}
 });
