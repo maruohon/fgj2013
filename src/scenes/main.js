@@ -38,30 +38,12 @@ Crafty.scene("main", function() {
 				//Crafty.e("2D, Canvas, grass_01")
 				//.attr({ x: i * 63, y: j * 63, z: 1 });
 				var tiletexture = sc['world'].attributes.getTileTexture(i, j);
-				// draw grass behind the trees
-				if(tiletexture === 'tree1' || tiletexture === 'tree2') {
-					sc['tile_x' + i + '_z'+ j] = new Tile('grass1', i * 64, j * 64, 190);
+				sc['tile_x' + i + '_z'+ j + '_0'] = new Tile(tiletexture[0], i * 64, j * 64);
+
+				// If the tile has a texture on the upper layer...
+				if(tiletexture[1] !== undefined) {
+					sc['tile_x' + i + '_z'+ j + '_1'] = new Tile(tiletexture[1], i * 64, j * 64, 205); // Set z higher than the default of 200
 				}
-				sc['tile_x' + i + '_z'+ j] = new Tile(tiletexture, i * 64, j * 64);
-/*
-				var tiletype = sc['world'].attributes.getTileType(i, j);
-				// grass
-				if(tiletype === 1) {
-					sc['tile_x' + i + '_z'+ j] = new Tile('grass1', i * 64, j * 64);
-				}
-				// stone
-				if(tiletype === 2) {
-					sc['tile_x' + i + '_z'+ j] = new Tile('tree2', i * 64, j * 64);
-				}
-				// tree
-				if(tiletype === 3) {
-					sc['tile_x' + i + '_z'+ j] = new Tile('tree1', i * 64, j * 64);
-				}
-				// water
-				else if(tiletype === 4) {
-					sc['tile_x' + i + '_z'+ j] = new Tile('water1', i * 64, j * 64);
-				}
-*/
 			}
 		}
 

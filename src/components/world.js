@@ -63,7 +63,7 @@ World = BaseEntity.extend({
 						// Layer 0 is the ground level terrain
 						chunkData[i][j][0] = [tileIDs.tileIDgrass, 'grass1'];
 						// Layer 1 is things above ground, like trees
-						chunkData[i][j][1] = tileIDs.tileIDair;
+						chunkData[i][j][1] = [tileIDs.tileIDair, undefined];
 					}
 				}
 				if(model.get('terrainData')[chunk_x] === undefined) {
@@ -80,7 +80,7 @@ World = BaseEntity.extend({
 						// Layer 0 is the ground level terrain
 						chunkData[i][j][0] = [tileIDs.tileIDstone, 'tree2'];
 						// Layer 1 is things above ground, like trees
-						chunkData[i][j][1] = tileIDs.tileIDair;
+						chunkData[i][j][1] = [tileIDs.tileIDair, undefined];
 					}
 				}
 				if(model.get('terrainData')[chunk_x] === undefined) {
@@ -122,6 +122,35 @@ World = BaseEntity.extend({
 				}
 			}
 
+
+			// Generate trees on top of grass
+			if(features.hasOwnProperty('trees') && features.trees === true) {
+				var size = model.get('chunkSize');
+				var numtiles = size * size;
+				var chunkData = model.get('terrainData')[chunk_x][chunk_z];
+
+				// Trees can only be generated one away from the right border of a chunk,
+				// because the other half of the tree texture has to fit on the right side
+				// of the initial tree trunk.
+				for(var i = 0; i < (size - 1); i++) {
+					for(var j = 0; j < size; j++) {
+						if(Math.random() >= (1 - model.get('treePercentage'))) {
+							// Trees can only generate on grass, that has nothing above it
+							if(i === 0 || (model.get('terrainData')[chunk_x][chunk_z][i - 1][j][0][0] === tileIDs.tileIDgrass &&
+							               model.get('terrainData')[chunk_x][chunk_z][i - 1][j][1][0] === tileIDs.tileIDair &&
+							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][0][0] === tileIDs.tileIDgrass &&
+							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][1][0] === tileIDs.tileIDair) ) {
+//								model.get('terrainData')[chunk_x][chunk_z][i + 0][j][0] = [tileIDs.tileIDgrass, 'grass1'];
+//								model.get('terrainData')[chunk_x][chunk_z][i + 1][j][0] = [tileIDs.tileIDgrass, 'grass1'];
+								// Draw the trees on the upper layer, above grass
+								model.get('terrainData')[chunk_x][chunk_z][i + 0][j][1] = [tileIDs.tileIDtree1, 'tree1'];
+								model.get('terrainData')[chunk_x][chunk_z][i + 1][j][1] = [tileIDs.tileIDtree1, 'tree2'];
+							}
+						}
+					}
+				}
+			}
+
 			// Generate stone batches among the grass
 			if(features.hasOwnProperty('stone') && features.stone === true) {
 				var size = model.get('chunkSize');
@@ -130,33 +159,13 @@ World = BaseEntity.extend({
 
 				for(var i = 0; i < size; i++) {
 					for(var j = 0; j < size; j++) {
-//						if(chunkData[i][j][0][0] === tileIDs.tileIDgrass) {
-							if(Math.random() >= (1 - model.get('stoneOnGrassPcnt'))) {
-								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDstone, 'tree2'];
-							}
-//						}
-					}
-				}
-			}
-
-			// Generate trees on top of grass
-			if(features.hasOwnProperty('trees') && features.trees === true) {
-				var size = model.get('chunkSize');
-				var numtiles = size * size;
-				var chunkData = model.get('terrainData')[chunk_x][chunk_z];
-				var rnd = 0;
-
-				// Trees can only be geenrated one away from the right border of a chunk,
-				// because the other half of the tree texture has to fit on the right side
-				// of the initial tree trunk.
-				for(var i = 0; i < (size - 1); i++) {
-					for(var j = 0; j < size; j++) {
-						if(chunkData[i][j][0][0] === tileIDs.tileIDgrass) {
-							rnd = Math.random();
-//							console.log('rnd: ' + rnd);
-							if(rnd >= (1 - model.get('treePercentage'))) {
-								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDtree1, 'tree1']; // FIXME trees should be on the [1] layer
-								model.get('terrainData')[chunk_x][chunk_z][i + 1][j][0] = [tileIDs.tileIDtree1, 'tree2']; // FIXME trees should be on the [1] layer
+						if(Math.random() >= (1 - model.get('stoneOnGrassPcnt'))) {
+							// Stone can only generate on grass, that has nothing above it
+							if(i === 0 || (model.get('terrainData')[chunk_x][chunk_z][i - 1][j][0][0] === tileIDs.tileIDgrass &&
+							               model.get('terrainData')[chunk_x][chunk_z][i - 1][j][1][0] === tileIDs.tileIDair &&
+							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][0][0] === tileIDs.tileIDgrass &&
+							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][1][0] === tileIDs.tileIDair) ) {
+								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDstone, 'stone1'];
 							}
 						}
 					}
@@ -169,11 +178,18 @@ World = BaseEntity.extend({
 				var size = model.get('chunkSize');
 				var numtiles = size * size;
 				var chunkData = model.get('terrainData')[chunk_x][chunk_z][0];
+				var last_x = 0, last_z = 0;
 
+				// water is only allowed to generate one away from the chunk borders, so that
+				// we can surround it with the water hole textures.
 				for(var i = 1; i < (size - 1); i++) {
 					for(var j = 1; j < (size - 1); j++) {
-//						if(chunkData[i][j] === tileIDs.tileIDgrass) {
-							if(Math.random() >= (1 - model.get('waterPercentage'))) {
+						if(Math.random() >= (1 - model.get('waterPercentage'))) {
+							// Water can only generate on grass, that has nothing above it
+							if(i === 0 || (model.get('terrainData')[chunk_x][chunk_z][i - 1][j][0][0] === tileIDs.tileIDgrass &&
+							               model.get('terrainData')[chunk_x][chunk_z][i - 1][j][1][0] === tileIDs.tileIDair &&
+							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][0][0] === tileIDs.tileIDgrass &&
+							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][1][0] === tileIDs.tileIDair) ) {
 								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDwater, 'water1'];
 								// Set the neighboring blocks as water borders
 								// FIXME we should check the tile types and use some fancier logic
@@ -186,7 +202,7 @@ World = BaseEntity.extend({
 								model.get('terrainData')[chunk_x][chunk_z][i + 0][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_tc'];
 								model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_tr'];
 							}
-//						}
+						}
 					}
 				}
 			}
@@ -249,11 +265,11 @@ World = BaseEntity.extend({
 
 			// First, unload all the chunks that are outside of the radius
 			for(var i in model.get('terrainData')) {
-				console.log('for i in ... :' + i);
+				//console.log('for i in ... :' + i);
 				for(var j in model.get('terrainData')[i]) {
 					// Chunk is outside of the current radius
 					if(Math.abs(x - (i * cs)) > r && Math.abs(z - (j * cs)) > r) {
-						console.log('loadAround: unloading');
+						//console.log('loadAround: unloading');
 						model.attributes.unloadChunk(i, j);
 					}
 				}
@@ -275,34 +291,38 @@ World = BaseEntity.extend({
 		}});
 
 		model.set({'getTileType': function(x, z) {
-			console.log('getTileType(' + x + ', ' + z + ')');
-			var type = 0;
+			//console.log('getTileType(' + x + ', ' + z + ')');
+			var type1 = 0;
+			var type2 = 0;
 			var cs = model.get('chunkSize');
 			var cx = Math.floor(x / cs);
 			var cz = Math.floor(z / cs);
-			type = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0][0]; // FIXME verify this
-			console.log('getTileType(): ' + type);
+			type1 = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0][0]; // FIXME verify this
+			type2 = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][1][0]; // FIXME verify this
+			//console.log('getTileType(): ' + type);
 
-			return type;
+			return [type1, type2];
 		}});
 
 		model.set({'getTileTexture': function(x, z) {
-			console.log('getTileType(' + x + ', ' + z + ')');
-			var texture = '';
+			//console.log('getTileType(' + x + ', ' + z + ')');
+			var texture1 = '';
+			var texture2 = '';
 			var cs = model.get('chunkSize');
 			var cx = Math.floor(x / cs);
 			var cz = Math.floor(z / cs);
-			texture = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0][1]; // FIXME verify this
-			console.log('getTileTexture(): ' + texture);
+			texture1 = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0][1]; // FIXME verify this
+			texture2 = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][1][1]; // FIXME verify this
+			//console.log('getTileTexture(): ' + texture);
 
-			return texture;
+			return [texture1, texture2];
 		}});
 
 		model.set({'unloadWorld': function() {
-			console.log('unloadWorld()');
+			//console.log('unloadWorld()');
 			// Unload all chunks
 			for(var i in model.get('terrainData')) {
-				console.log('for i in ... :' + i);
+				//console.log('for i in ... :' + i);
 				for(var j in model.get('terrainData')[i]) {
 					model.attributes.unloadChunk(i, j);
 				}
