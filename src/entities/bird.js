@@ -45,25 +45,25 @@ Bird = BaseEntity.extend({
 				if(sDist <= 8200) {
 					if(model.get('soundPlaying') !== "hb_very_fast") {
 						Crafty.audio.stop(model.get('soundPlaying'));
-						Crafty.audio.play("hb_very_fast",-1,0.2);
+						Crafty.audio.play("hb_very_fast",-1,0.5);
 						model.set('soundPlaying',"hb_very_fast");
 					}
 				} else if(sDist > 8200 && sDist <= 65536) {
 					if(model.get('soundPlaying') !== "hb_normal") {
 						Crafty.audio.stop(model.get('soundPlaying'));
-						Crafty.audio.play("hb_normal",-1,0.1);
+						Crafty.audio.play("hb_normal",-1,0.4);
 						model.set('soundPlaying',"hb_normal");
 					}
 				} else if(sDist > 65536 && sDist <= 147456) {
 					if(model.get('soundPlaying') !== "hb_slow") {
 						Crafty.audio.stop(model.get('soundPlaying'));
-						Crafty.audio.play("hb_slow",-1,0.1);
+						Crafty.audio.play("hb_slow",-1,0.3);
 						model.set('soundPlaying',"hb_slow");
 					}
 				} else if(sDist > 147456 && sDist <= 250000) {
 					if(model.get('soundPlaying') !== "hb_very_slow") {
 						Crafty.audio.stop(model.get('soundPlaying'));
-						Crafty.audio.play("hb_very_slow",-1,0.1);
+						Crafty.audio.play("hb_very_slow",-1,0.3);
 						model.set('soundPlaying',"hb_very_slow");
 					}
 				} else {
@@ -263,7 +263,7 @@ Bird = BaseEntity.extend({
 		}});
 		model.set({'mouseHandler' : function (e) {
 
-			model.attributes.moveTo(e.clientX/*-entity.w/2*/,e.clientY/*-entity.h/2*/);
+			model.attributes.moveTo(e.offsetX/*-entity.w/2*/,e.offsetY/*-entity.h/2*/);
 		}});
 	}
 });
