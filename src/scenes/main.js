@@ -9,7 +9,7 @@ Crafty.scene("main", function() {
         "src/entities/ufo.js",
         "src/entities/worm.js",
         "src/entities/tile.js",
-				"src/entities/bird.js",
+		"src/entities/bird.js",
 		"src/components/world.js",
         "src/interfaces/info.js"
 	];
@@ -26,6 +26,7 @@ Crafty.scene("main", function() {
 		//Crafty.viewport.follow(sc['bird'].get('entity'), 0, 0);
 
 		sc['world'] = new World();
+		sc['world'].attributes.setSeed('foo1234');
 		sc['world'].attributes.loadAroundXZwithR(0, 0, 30)
 
 		console.log(sc['world'].defaults);

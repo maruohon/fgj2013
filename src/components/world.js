@@ -12,9 +12,10 @@ World = BaseEntity.extend({
 		'terrainFeatures'	: { 'water' : true, 'stone' : true, 'trees' : true },	// Additional terrain features that will be generated (water, stone, grass, trees)
 		'chunkSize'			: 8,
 		'treePercentage'	: 0.04,	// On average, xx % of (grass) tiles can be covered with trees
-		'stoneOnGrassPcnt'	: 0.01,	// Stone on grass percentage
+		'stoneOnGrassPcnt'	: 0.05,	// Stone on grass percentage
 		'grassOnStonePcnt'	: 0.2,	// Grass on stone percentage
 		'waterPercentage'	: 0.05,
+		'worldSeed'			: '',
 		'terrainData'		: []
 	},
 	initialize: function(){
@@ -92,20 +93,15 @@ World = BaseEntity.extend({
 			return true;
 		}});
 
-		model.set({'generateFeatures': function(chunk_x, chunk_z, seed, features_p) {
-			if(seed === undefined) {
-				seed = "";
-			}
-			// Initialize the pseudorandom generator with the chunk coordinates
-			Math.seedrandom('x' + chunk_x + 'z' + chunk_z + seed);
+		model.set({'generateFeatures': function(chunk_x, chunk_z) {
+			var seed = '';
 			var features = [];
 
-			if(features_p !== undefined) {
-				features = features_p;
-			}
-			else {
-				features = model.get('terrainFeatures');
-			}
+			seed = model.get('worldSeed');
+			features = model.get('terrainFeatures');
+
+			// Initialize the pseudorandom generator with the chunk coordinates and the world seed
+			Math.seedrandom('x' + chunk_x + 'z' + chunk_z + seed);
 
 			// Generate grass batches if the base terrain type is stone
 			if(model.get('terrainType') === 'stone') {
@@ -368,6 +364,12 @@ World = BaseEntity.extend({
 					model.attributes.unloadChunk(i, j);
 				}
 			}
+		}});
+
+		model.set({'setSeed': function(seed) {
+			model.set('worldSeed', seed);
+
+			return true;
 		}});
 
 		model.set({'deleteWorld': function() {
