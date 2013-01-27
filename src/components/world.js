@@ -118,6 +118,265 @@ World = BaseEntity.extend({
 				}
 			}
 
+			// Generate water (lakes)
+			if(features.hasOwnProperty('water') && features.water === true) {
+				// TODO: Water needs to exist in larger quantities
+				var size = model.get('chunkSize');
+				var numtiles = size * size;
+				var chunkData = model.get('terrainData')[chunk_x][chunk_z][0];
+				var last_x = 0, last_z = 0;
+
+				// water is only allowed to generate one away from the chunk borders, so that
+				// we can surround it with the water hole textures.
+				for(var i = 1; i < (size - 1); i++) {
+					for(var j = 1; j < (size - 1); j++) {
+						if(Math.random() >= (1 - model.get('waterPercentage'))) {
+							// Water can only generate on grass, that has nothing above it
+/*
+							if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j][0][0] === tileIDs.tileIDgrass &&
+							   model.get('terrainData')[chunk_x][chunk_z][i - 1][j][1][0] === tileIDs.tileIDair &&
+							   model.get('terrainData')[chunk_x][chunk_z][i - 0][j][0][0] === tileIDs.tileIDgrass &&
+							   model.get('terrainData')[chunk_x][chunk_z][i - 0][j][1][0] === tileIDs.tileIDair ) {
+*/
+							// Check that the tile where we are trying to place the water is grass
+							if(model.get('terrainData')[chunk_x][chunk_z][i + 0][j][0][0] === tileIDs.tileIDgrass &&
+							   model.get('terrainData')[chunk_x][chunk_z][i + 0][j][1][0] === tileIDs.tileIDair ) {
+								// Check that there is no water nearby so that it is impossible to get
+								// a matching texture to surround the water
+								// Water is allowed in the tiles immediately adjacent to it, but not one tile away from it
+								var tmpx = (i >= 2)? i - 2 : i - 1;
+								var tmpz = (j >= 2)? j - 2 : j - 1;
+								var canGenerate = 1;
+								for(var k = 0; k < 5 && tmpx < size; k++, tmpx++) {
+									for(var l = 0; l < 5 && tmpz < size; l++, tmpz++) {
+										// We only need to check the tiles that are one away from the current position
+										if(tmpx < (i - 1) || tmpx > (i + 1) || tmpz < (j - 1) || tmpz > (j + 1) ) {
+											// Water tile found
+											if(model.get('terrainData')[chunk_x][chunk_z][tmpx][tmpz][0][0] === tileIDs.tileIDwater) {
+												canGenerate = 0;
+											}
+										}
+									}
+								}
+								if(canGenerate === 1) {
+
+									model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDwater, 'water1'];
+									// Set the neighboring blocks as water borders
+									// FIXME we should check the tile types and use some fancier logic
+
+/////////////////////
+
+									// Bottom center
+									if(model.get('terrainData')[chunk_x][chunk_z][i + 0][j + 1][0][0] === tileIDs.tileIDgrass) {
+										// The adjacent corners are grass
+										if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0][0] === tileIDs.tileIDgrass &&
+										   model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 0][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_bc'];
+										}
+										// Left adjacent corner is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 0][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_oc_br'];
+										}
+										// Right adjacent corner is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 0][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_oc_bl'];
+										}
+									}
+
+									// Top center
+									if(model.get('terrainData')[chunk_x][chunk_z][i + 0][j - 1][0][0] === tileIDs.tileIDgrass) {
+										// The adjacent corners are grass
+										if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0][0] === tileIDs.tileIDgrass &&
+										   model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 0][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_tc'];
+										}
+										// Left adjacent corner is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 0][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_oc_tr'];
+										}
+										// Right adjacent corner is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 0][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_oc_tl'];
+										}
+									}
+									
+/////////////////////////
+
+									// Middle left
+									if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0][0] === tileIDs.tileIDgrass) {
+										// The adjacent corners are grass
+										if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0][0] === tileIDs.tileIDgrass &&
+										   model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_ic_ml'];
+										}
+										// Top adjacent corner is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_oc_bl'];
+										}
+										// Bottom adjacent corner is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_oc_tl'];
+										}
+									}
+
+									// Middle right
+									if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0][0] === tileIDs.tileIDgrass) {
+										// The adjacent corners are grass
+										if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0][0] === tileIDs.tileIDgrass &&
+										   model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_ic_mr'];
+										}
+										// Top adjacent corner is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_oc_br'];
+										}
+										// Bottom adjacent corner is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_oc_tr'];
+										}
+									}
+
+////////////////////////////
+
+									// Bottom left is grass
+									if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0][0] === tileIDs.tileIDgrass) {
+										// Bottom left is grass and bottom center is grass and left middle is grass
+										if(model.get('terrainData')[chunk_x][chunk_z][i - 0][j + 1][0][0] === tileIDs.tileIDgrass &&
+										   model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_bl'];
+										}
+										// Bottom left is grass and bottom center is water and left middle is grass
+										else if(model.get('terrainData')[chunk_x][chunk_z][i - 0][j + 1][0][0] === tileIDs.tileIDwater &&
+										        model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_ml'];
+										}
+										// Bottom left is grass and bottom center is grass and left middle is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i - 0][j + 1][0][0] === tileIDs.tileIDgrass &&
+										        model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_bc'];
+										}
+									}
+/*									// Bottom left is water
+									else if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0][0] === tileIDs.tileIDwater) {
+										// Bottom left is water and bottom center is grass
+										if(model.get('terrainData')[chunk_x][chunk_z][i - 0][j + 1][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 0][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_oc_br'];
+										}
+										// Bottom left is water and left middle is grass
+										else if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_oc_tl'];
+										}
+									}
+*/
+
+/////////////////////////////
+
+									// Bottom right is grass
+									if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0][0] === tileIDs.tileIDgrass) {
+										// Bottom right is grass and bottom center is grass and right middle is grass
+										if(model.get('terrainData')[chunk_x][chunk_z][i + 0][j + 1][0][0] === tileIDs.tileIDgrass &&
+										   model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_br'];
+										}
+										// Bottom right is grass and bottom center is water and right middle is grass
+										else if(model.get('terrainData')[chunk_x][chunk_z][i + 0][j + 1][0][0] === tileIDs.tileIDwater &&
+										        model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_mr'];
+										}
+										// Bottom right is grass and bottom center is grass and right middle is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i + 0][j + 1][0][0] === tileIDs.tileIDgrass &&
+										        model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_bc'];
+										}
+									}
+
+//////////////////////////////
+
+									// Top left is grass
+									if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0][0] === tileIDs.tileIDgrass) {
+										// Top left is grass and top center is grass and left middle is grass
+										if(model.get('terrainData')[chunk_x][chunk_z][i - 0][j - 1][0][0] === tileIDs.tileIDgrass &&
+										   model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 0][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_tl'];
+										}
+										// Top left is grass and top center is water and left middle is grass
+										else if(model.get('terrainData')[chunk_x][chunk_z][i - 0][j - 1][0][0] === tileIDs.tileIDwater &&
+										        model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_ml'];
+										}
+										// Top left is grass and top center is grass and left middle is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i - 0][j - 1][0][0] === tileIDs.tileIDgrass &&
+										        model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_tc'];
+										}
+									}
+
+////////////////////////////
+
+									// Top right is grass
+									if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0][0] === tileIDs.tileIDgrass) {
+										// Top right is grass and top center is grass and right middle is grass
+										if(model.get('terrainData')[chunk_x][chunk_z][i + 0][j - 1][0][0] === tileIDs.tileIDgrass &&
+										   model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 0][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_tr'];
+										}
+										// Top right is grass and top center is water and right middle is grass
+										else if(model.get('terrainData')[chunk_x][chunk_z][i + 0][j - 1][0][0] === tileIDs.tileIDwater &&
+										        model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_mr'];
+										}
+										// Top right is grass and top center is grass and right middle is water
+										else if(model.get('terrainData')[chunk_x][chunk_z][i + 0][j - 1][0][0] === tileIDs.tileIDgrass &&
+										        model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 0][0] === tileIDs.tileIDwater) {
+											model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_tc'];
+										}
+									}
+
+/*
+									// Bottom right
+									if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0][0] === tileIDs.tileIDgrass) {
+										model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_br'];
+									}
+									else if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0][0] === tileIDs.tileIDwater) {
+										// Bottom right is water and bottom center is grass
+										if(model.get('terrainData')[chunk_x][chunk_z][i - 0][j + 1][0][0] === tileIDs.tileIDgrass) {
+											model.get('terrainData')[chunk_x][chunk_z][i - 0][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_oc_br'];
+										}
+									}
+
+									// Left middle
+									if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0][0] === tileIDs.tileIDgrass) {
+										model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_ic_ml'];
+									}
+
+									// Right middle
+									if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0][0] === tileIDs.tileIDgrass) {
+										model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_ic_mr'];
+									}
+
+									// Top left
+									if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0][0] === tileIDs.tileIDgrass) {
+										model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_tl'];
+									}
+									else if(model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0][0] === tileIDs.tileIDwater) {
+										model.get('terrainData')[chunk_x][chunk_z][i - 0][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_oc_tl'];
+										model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 0][0] = [tileIDs.tileIDgrass, 'waterborder_oc_bl'];
+									}
+
+									// Top right
+									if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0][0] === tileIDs.tileIDgrass) {
+										model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_ic_tr'];
+									}
+									else if(model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0][0] === tileIDs.tileIDwater) {
+										model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_oc_tr'];
+									}
+*/
+								}
+							}
+						}
+					}
+				}
+			}
 
 			// Generate trees on top of grass
 			if(features.hasOwnProperty('trees') && features.trees === true) {
@@ -132,10 +391,10 @@ World = BaseEntity.extend({
 					for(var j = 0; j < size; j++) {
 						if(Math.random() >= (1 - model.get('treePercentage'))) {
 							// Trees can only generate on grass, that has nothing above it
-							if(i === 0 || (model.get('terrainData')[chunk_x][chunk_z][i - 1][j][0][0] === tileIDs.tileIDgrass &&
-							               model.get('terrainData')[chunk_x][chunk_z][i - 1][j][1][0] === tileIDs.tileIDair &&
-							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][0][0] === tileIDs.tileIDgrass &&
-							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][1][0] === tileIDs.tileIDair) ) {
+							if(i === 0 || (model.get('terrainData')[chunk_x][chunk_z][i + 0][j][0][0] === tileIDs.tileIDgrass &&
+							               model.get('terrainData')[chunk_x][chunk_z][i + 0][j][1][0] === tileIDs.tileIDair &&
+							               model.get('terrainData')[chunk_x][chunk_z][i + 1][j][0][0] === tileIDs.tileIDgrass &&
+							               model.get('terrainData')[chunk_x][chunk_z][i + 1][j][1][0] === tileIDs.tileIDair) ) {
 //								model.get('terrainData')[chunk_x][chunk_z][i + 0][j][0] = [tileIDs.tileIDgrass, 'grass1'];
 //								model.get('terrainData')[chunk_x][chunk_z][i + 1][j][0] = [tileIDs.tileIDgrass, 'grass1'];
 								// Draw the trees on the upper layer, above grass
@@ -161,41 +420,6 @@ World = BaseEntity.extend({
 							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][0][0] === tileIDs.tileIDgrass &&
 							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][1][0] === tileIDs.tileIDair) ) {
 								model.get('terrainData')[chunk_x][chunk_z][i][j][1] = [tileIDs.tileIDstone, 'stone1'];
-							}
-						}
-					}
-				}
-			}
-
-			// Generate water (lakes)
-			if(features.hasOwnProperty('water') && features.water === true) {
-				// TODO: Water needs to exist in larger quantities
-				var size = model.get('chunkSize');
-				var numtiles = size * size;
-				var chunkData = model.get('terrainData')[chunk_x][chunk_z][0];
-				var last_x = 0, last_z = 0;
-
-				// water is only allowed to generate one away from the chunk borders, so that
-				// we can surround it with the water hole textures.
-				for(var i = 1; i < (size - 1); i++) {
-					for(var j = 1; j < (size - 1); j++) {
-						if(Math.random() >= (1 - model.get('waterPercentage'))) {
-							// Water can only generate on grass, that has nothing above it
-							if(i === 0 || (model.get('terrainData')[chunk_x][chunk_z][i - 1][j][0][0] === tileIDs.tileIDgrass &&
-							               model.get('terrainData')[chunk_x][chunk_z][i - 1][j][1][0] === tileIDs.tileIDair &&
-							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][0][0] === tileIDs.tileIDgrass &&
-							               model.get('terrainData')[chunk_x][chunk_z][i - 0][j][1][0] === tileIDs.tileIDair) ) {
-								model.get('terrainData')[chunk_x][chunk_z][i][j][0] = [tileIDs.tileIDwater, 'water1'];
-								// Set the neighboring blocks as water borders
-								// FIXME we should check the tile types and use some fancier logic
-								model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_bl'];
-								model.get('terrainData')[chunk_x][chunk_z][i + 0][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_bc'];
-								model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 1][0] = [tileIDs.tileIDgrass, 'waterborder_br'];
-								model.get('terrainData')[chunk_x][chunk_z][i - 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_ml'];
-								model.get('terrainData')[chunk_x][chunk_z][i + 1][j + 0][0] = [tileIDs.tileIDgrass, 'waterborder_mr'];
-								model.get('terrainData')[chunk_x][chunk_z][i - 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_tl'];
-								model.get('terrainData')[chunk_x][chunk_z][i + 0][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_tc'];
-								model.get('terrainData')[chunk_x][chunk_z][i + 1][j - 1][0] = [tileIDs.tileIDgrass, 'waterborder_tr'];
 							}
 						}
 					}

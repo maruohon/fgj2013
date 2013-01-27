@@ -26,7 +26,7 @@ Crafty.scene("main", function() {
 		//Crafty.viewport.follow(sc['bird'].get('entity'), 0, 0);
 
 		sc['world'] = new World();
-		sc['world'].attributes.setSeed('foo1234');
+		sc['world'].attributes.setSeed('foo12');
 		sc['world'].attributes.loadAroundXZwithR(0, 0, 30)
 
 		console.log(sc['world'].defaults);
