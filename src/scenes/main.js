@@ -25,6 +25,10 @@ Crafty.scene("main", function() {
 			wormList[i+''].set('tiley',Math.round(Math.random() * 31));
 			
 		}
+
+		sc['world'] = new World();
+		sc['world'].attributes.setSeed('foo12');
+
 		sc['heart'] = new HeartIcon();	
 		
 		sc['bird'] = new Bird();	
@@ -49,9 +53,7 @@ Crafty.scene("main", function() {
 //		sc['grass'] = new Tile('grass01');
 		//Crafty.viewport.follow(sc['bird'].get('entity'), 0, 0);
 
-		sc['world'] = new World();
-		sc['world'].attributes.setSeed('foo12');
-		sc['world'].attributes.loadAroundXZwithR(0, 0, 30)
+		sc['world'].attributes.loadAroundXZwithR(0, 0, 32);
 
 		for (var i = 0; i < 32; i++) {
 			for (var j = 0; j < 32; j++) {

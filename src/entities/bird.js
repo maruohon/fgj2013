@@ -282,9 +282,34 @@ Bird = BaseEntity.extend({
 			
 			console.log(x+" "+y);
 			
-			var tilex = Math.floor(x/64)*64;
-			var tiley = Math.floor(y/64)*64;
-			
+			var floor_x = Math.floor(x / 64);
+			var floor_y = Math.floor(y / 64);
+			var tilex = floor_x * 64;
+			var tiley = floor_y * 64;
+/*
+			sc['world'].attributes.loadAroundXZwithR(floor_x, floor_y, 32);
+
+			var tiletexture = [];
+
+			for (var i = 0; i < 16; i++) {
+				for (var j = 0; j < 16; j++) {
+					// FIXME the rendering is broken
+					if(sc['tile_x' + i + '_z'+ j + '_0'] === undefined) {
+						tiletexture = sc['world'].attributes.getTileTexture(i, j);
+						sc['tile_x' + i + '_z'+ j + '_0'] = new Tile(tiletexture[0], floor_x * 64 + i * 64, floor_y * 64 + j * 64);
+
+						// If the tile has a texture on the upper layer...
+						if(tiletexture[1] !== undefined) && sc['tile_x' + i + '_z'+ j + '_1'] === undefined) {
+							sc['tile_x' + i + '_z'+ j + '_1'] = new Tile(tiletexture[1], floor_x * 64 + i * 64, floor_y * 64 + j * 64, 205); // Set z higher than the default of 200
+						}
+						else {
+							sc['tile_x' + i + '_z'+ j + '_1'] = '';
+						}
+					}
+				}
+			}
+*/
+
 			console.log(tilex+" x "+tiley);
 			if(tilex != model.get('targetx') || tiley != model.get('targety')) {
 				model.set({'targetx' : tilex});

@@ -465,7 +465,7 @@ World = BaseEntity.extend({
 		}});
 
 		model.set({'unloadChunk': function(chunk_x, chunk_z) {
-			console.log('unloadChunk(' + chunk_x + ', ' + chunk_z + ')');
+			//console.log('unloadChunk(' + chunk_x + ', ' + chunk_z + ')');
 			var str = "";
 			//console.log('unloadChunk()' + model.get('terrainData'));
 			str = JSON.stringify(model.get('terrainData')[chunk_x][chunk_z]);
