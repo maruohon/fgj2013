@@ -302,9 +302,12 @@ Bird = BaseEntity.extend({
 				}
 			model.attributes.moveTo(event.offsetX/*-entity.w/2*/,event.offsetY/*-entity.h/2*/);
 		}});
+		
 		Crafty.viewport.scroll('_x', -model.get('entity').x+Crafty.viewport.width/2);
 		Crafty.viewport.scroll('_y', -model.get('entity').y+Crafty.viewport.height/2);
 		model.get('scroll')[0] = -model.get('entity').x+Crafty.viewport.width/2;
 		model.get('scroll')[1] = -model.get('entity').y+Crafty.viewport.height/2;
+		console.log(model.get('scroll'));
+		model.attributes.moveTo(model.getEntity().x-64,model.getEntity().y-64);
 	}
 });
