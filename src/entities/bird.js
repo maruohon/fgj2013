@@ -6,8 +6,8 @@ Bird = BaseEntity.extend({
 		'animFrame' : 0,
 		'width': 0,   // width
 		'height': 0,  // height
-		'x': 768,       // x
-		'y': 512,       // y
+		'x': 12*64,//768,       // x
+		'y': 12*64,//512,       // y
 		'r': 0,       // rotation (not used yet)
 		'distcalcticks': 30,
 		'newpath' : false,

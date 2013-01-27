@@ -30,8 +30,8 @@ Crafty.scene("title", function() {
 		$("#cr-stage").click(function(e) {
 			console.log("Click registered");
 		});
-		for (var i = 0; i < 26; i++) {
-			for (var j = 0; j < 16; j++) {
+		for (var i = 0; i < 24; i++) {
+			for (var j = 0; j < 24; j++) {
 				//place grass on all tiles
 				//grassType = Crafty.math.randomInt(1, 4);
 				//console.log(gameContainer.conf.get('renderType'));

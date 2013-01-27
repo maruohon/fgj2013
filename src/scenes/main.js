@@ -39,7 +39,7 @@ Crafty.scene("main", function() {
             })
             .bind('EnterFrame', function(e){
             	//console.log(wormList);
-            	sc['worm_text'].x = -sc['bird'].get('scroll')[0] - 130;
+            	sc['worm_text'].x = -sc['bird'].get('scroll')[0] - 125;
             	sc['worm_text'].y = -sc['bird'].get('scroll')[1] + 90;
             	var worms = wormList.length;
             	sc['worm_text'].text("Worms: "+(50-worms)+" / 50");

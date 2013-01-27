@@ -3,7 +3,8 @@ HeartIcon = BaseEntity.extend({
         'frame' : 0,
         'origY' : 0,
         'origX' : 0,
-        'hp' : 100
+        'hp' : 100,
+        'gameover': false
     },
     initialize: function(){
     	var model = this;
@@ -79,15 +80,21 @@ HeartIcon = BaseEntity.extend({
 		
 		var entity = Crafty.e("2D, Canvas, heart_fill");
 		entity
-		.attr({x: 60-45, y: ((Crafty.viewport.height))-100+5, z: 340})
+		.attr({x: 60-45, y: ((Crafty.viewport.height))-100+5, z: 340, w: 96})
 		.bind('EnterFrame', function(e){
 			// Edit
 			//model.set('hp', model.get('hp') -1);
 			//model.set('hp', model.get('hp') + Math.random()*2);
 			
 			if(model.get('hp') <= 0) {
+	
+				if(model.get('gameover') == false) {
+					new GameOverDialog();
+					model.set('gameover', true);
+					 
+				}
 				//Crafty.scene('gameover');
-				var test = new GameOverDialog();
+				
 				//model.set('hp', 100);
 			}
 			var height = (76/100) * model.get('hp');
@@ -98,6 +105,7 @@ HeartIcon = BaseEntity.extend({
 			
 			entity.x = -sc['bird'].get('scroll')[0] + 60-entity.w/2;
 			entity.y = -sc['bird'].get('scroll')[1] + ((Crafty.viewport.height))-100;
+			
 			/*if(entity.w > 90) {
 				entity.w--;
 				entity.x = 60-frameentity.w/2;

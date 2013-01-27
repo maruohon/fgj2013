@@ -79,5 +79,8 @@ GameOverDialog = BaseEntity.extend({
 		entity_new_game.origin(entity_new_game.w/2, entity_new_game.h/2);
 		
 		sc['score_text'].getEntity().destroy();
+		sc['worm_text'].destroy();
+		sc['bird'].getEntity().destroy();
+		sc['heart'].getEntity().destroy();
     }
 });
