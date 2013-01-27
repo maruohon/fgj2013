@@ -70,7 +70,7 @@ World = BaseEntity.extend({
 					model.get('terrainData')[chunk_x] = [];
 				}
 				model.get('terrainData')[chunk_x][chunk_z] = chunkData.slice();
-//				console.log('generateChunk(): ' + chunkData);
+				//console.log('generateChunk(): ' + chunkData);
 			}
 			else if(type === 'stone') {
 				for(var i = 0; i < size; i++) {
@@ -155,7 +155,6 @@ World = BaseEntity.extend({
 			if(features.hasOwnProperty('stone') && features.stone === true) {
 				var size = model.get('chunkSize');
 				var numtiles = size * size;
-//				var chunkData = model.get('terrainData')[chunk_x][chunk_z];
 
 				for(var i = 0; i < size; i++) {
 					for(var j = 0; j < size; j++) {
@@ -211,7 +210,7 @@ World = BaseEntity.extend({
 		}});
 
 		model.set({'loadChunk': function(chunk_x, chunk_z) {
-			console.log('loadChunk(' + chunk_x + ', ' + chunk_z + ')');
+			//console.log('loadChunk(' + chunk_x + ', ' + chunk_z + ')');
 			if(model.attributes.chunkIsLoaded(chunk_x, chunk_z) === true) {
 				return true;
 			}
@@ -223,15 +222,15 @@ World = BaseEntity.extend({
 			var tmp = localStorage.getItem('TerrainData_x' + chunk_x + '_z' + chunk_z);
 
 			if(tmp === null) {
-//				console.log('loadChunk(): localStorage.getItem() returned null');
-//				console.log('generateChunk(' + chunk_x + ', ' + chunk_z + ')');
+				//console.log('loadChunk(): localStorage.getItem() returned null');
+				//console.log('generateChunk(' + chunk_x + ', ' + chunk_z + ')');
 				model.attributes.generateChunk(chunk_x, chunk_z);
-//				console.log(model.get('terrainData'));
-//				console.log('generateFeatures(' + chunk_x + ', ' + chunk_z + ')');
+				//console.log(model.get('terrainData'));
+				//console.log('generateFeatures(' + chunk_x + ', ' + chunk_z + ')');
 				model.attributes.generateFeatures(chunk_x, chunk_z);
 			}
 			else {
-//				console.log('loadChunk(): localStorage.getItem() returned data');
+				//console.log('loadChunk(): localStorage.getItem() returned data');
 				if(model.get('terrainData')[chunk_x] === undefined) {
 					model.get('terrainData')[chunk_x] = [];
 					model.get('terrainData')[chunk_x][chunk_z] = [];
@@ -248,9 +247,9 @@ World = BaseEntity.extend({
 		model.set({'unloadChunk': function(chunk_x, chunk_z) {
 			console.log('unloadChunk(' + chunk_x + ', ' + chunk_z + ')');
 			var str = "";
-//			console.log('unloadChunk()' + model.get('terrainData'));
+			//console.log('unloadChunk()' + model.get('terrainData'));
 			str = JSON.stringify(model.get('terrainData')[chunk_x][chunk_z]);
-//			console.log('str: ' + str);
+			//console.log('str: ' + str);
 			localStorage.setItem('TerrainData_x' + chunk_x + '_z' + chunk_z, str);
 			model.get('terrainData')[chunk_x][chunk_z].splice();
 
@@ -260,7 +259,7 @@ World = BaseEntity.extend({
 		// Keep the world loaded around the player and/or around the x and z coordinates given, with a radius of 'r'
 		// Note: the radius will be a square, not a circle!
 		model.set({'loadAroundXZwithR': function(x, z, r) {
-			console.log('loadAroundXZwithR(' + x + ', ' + z + ', ' + r + ')');
+			//console.log('loadAroundXZwithR(' + x + ', ' + z + ', ' + r + ')');
 			var cs = model.get('chunkSize'); // current chunk size
 
 			// First, unload all the chunks that are outside of the radius
@@ -316,6 +315,48 @@ World = BaseEntity.extend({
 			//console.log('getTileTexture(): ' + texture);
 
 			return [texture1, texture2];
+		}});
+
+		model.set({'birdCanMoveToTile': function(x, z) {
+			var cs = model.get('chunkSize');
+			var cx = Math.floor(x / cs);
+			var cz = Math.floor(z / cs);
+//			var tile_bot = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0][0];
+			var tile_top = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][1][0];
+
+			if(tile_top === tileIDs.tileIDair) {
+				return true;
+			}
+
+			return false;
+		}});
+
+		model.set({'wormCanMoveToTile': function(x, z) {
+			var cs = model.get('chunkSize');
+			var cx = Math.floor(x / cs);
+			var cz = Math.floor(z / cs);
+			var tile_bot = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0][0];
+			var tile_top = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][1][0];
+
+			if(tile_top === tileIDs.tileIDair && tile_bot !== tileIDs.tileIDwater) {
+				return true;
+			}
+
+			return false;
+		}});
+
+		model.set({'tileIsDiggable': function(x, z) {
+			var cs = model.get('chunkSize');
+			var cx = Math.floor(x / cs);
+			var cz = Math.floor(z / cs);
+			var tile_bot = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][0][0];
+			var tile_top = model.get('terrainData')[cx][cz][x - (cx * cs)][z - (cz * cs)][1][0];
+
+			if(tile_top === tileIDs.tileIDair && tile_bot === tileIDs.tileIDgrass) {
+				return true;
+			}
+
+			return false;
 		}});
 
 		model.set({'unloadWorld': function() {
