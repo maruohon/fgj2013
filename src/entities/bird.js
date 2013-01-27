@@ -1,7 +1,7 @@
 Bird = BaseEntity.extend({
 	defaults: {
 		'speed' : 2,
-		'acc' : 0.1,
+		'acc' : 0.01,
 		'frame' : 0,
 		'animFrame' : 0,
 		'width': 0,   // width
@@ -227,10 +227,11 @@ Bird = BaseEntity.extend({
 		.bind('Click', function(e) {
 			
 			// Try to eat
+			
 			// Check tile
 			var tilex = Math.round(model.get('entity').x/64);
 			var tiley = Math.round(model.get('entity').y/64);
-			
+			var ifworm = false;
 			$.each(wormList, function(i,worm) {
 				if(worm.get('tilex') === tilex && worm.get('tiley') === tiley) {
 					console.log("Got a worm!");
@@ -242,10 +243,13 @@ Bird = BaseEntity.extend({
 					model.get('entity').y = model.get('targety');
 					worm.get('entity').destroy();
 					wormList.splice(i,1);
+					ifworm = true;
 					return false;
 				}
 			});
-			
+			if(!ifworm) {
+				Crafty.audio.play("peck_dirt",1,0.5);
+			}
 		})
 		.setName('Bird');
 
